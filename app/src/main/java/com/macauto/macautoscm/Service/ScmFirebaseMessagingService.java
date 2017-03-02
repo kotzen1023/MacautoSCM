@@ -30,11 +30,16 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
 
 
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-        Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
+        //Log.d(TAG, "Notification Message Body: " + remoteMessage.getNotification().getBody());
 
 
         //Calling method to generate notification
-        sendNotification(remoteMessage.getNotification().getBody());
+        Object obj = remoteMessage.getData().get("body");
+        if (obj != null) {
+            sendNotification(obj.toString());
+        }
+
+
     }
 
     private void sendNotification(String messageBody) {
