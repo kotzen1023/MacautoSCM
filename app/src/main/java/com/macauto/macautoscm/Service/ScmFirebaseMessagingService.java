@@ -1,4 +1,4 @@
-package com.macauto.macautoscm;
+package com.macauto.macautoscm.Service;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,12 +9,21 @@ import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.macauto.macautoscm.MainActivity;
+import com.macauto.macautoscm.R;
 
 
 public class ScmFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = ScmFirebaseMessagingService.class.getName();
+
+    public ScmFirebaseMessagingService() {
+        Log.d(TAG, "ScmFirebaseMessagingService");
+        FirebaseMessaging.getInstance().subscribeToTopic("test");
+    }
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
