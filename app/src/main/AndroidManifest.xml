@@ -18,6 +18,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MainMenu"/>
 
         <receiver android:enabled="true" android:name=".Receiver.Receive_BootCompleted">
             <intent-filter>

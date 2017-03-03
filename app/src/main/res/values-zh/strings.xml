@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">皇田 SCM</string>
+    <string name="scm_history_tab">訊息通知</string>
+    <string name="scm_setting">設定</string>
 </resources>
