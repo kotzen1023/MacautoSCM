@@ -17,8 +17,10 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.macauto.macautoscm.Data.Constants;
 import com.macauto.macautoscm.Data.HistoryAdapter;
 import com.macauto.macautoscm.Data.HistoryItem;
+import com.macauto.macautoscm.Data.InitData;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -63,26 +65,28 @@ public class HistoryFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*HistoryItem item = historyAdapter.getItem(position);
+                HistoryItem item = historyAdapter.getItem(position);
 
                 if (item != null) {
                     Intent intent = new Intent(context, HistoryShow.class);
                     intent.putExtra("HISTORY_TYPE", String.valueOf(item.getAction()));
-                    intent.putExtra("HISTORY_SUBJECT", item.getSubject());
+                    intent.putExtra("HISTORY_TITLE", item.getTitle());
                     intent.putExtra("HISTORY_MSG", item.getMsg());
                     intent.putExtra("HISTORY_DATE", item.getDate());
                     startActivity(intent);
-                }*/
+                }
             }
         });
 
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                /*if (intent.getAction().equalsIgnoreCase(Constants.ACTION.MQTT_GET_HISTORY_CONNECTION_INFO)) {
+                if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION)) {
                     Log.d(TAG, "receive brocast !");
 
-                    Log.d(TAG, "ConnectionDetails.clientHandle = "+ InitData.clientHandle);
+                    historyAdapter.notifyDataSetChanged();
+
+                    /*Log.d(TAG, "ConnectionDetails.clientHandle = "+ InitData.clientHandle);
                     //connection = Connections.getInstance(context).getConnection(InitData.clientHandle);
                     if (InitData.connection != null) {
 
@@ -90,32 +94,19 @@ public class HistoryFragment extends Fragment {
                         historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
                         listView.setAdapter(historyAdapter);
 
-                    }
+                    }*/
 
-                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.MQTT_GET_HISTORY_MATCH_MESSAGE)) {
-
-                    historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
-                    listView.setAdapter(historyAdapter);
-                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.MQTT_CLEAR_HISTORY)) {
-
-                    InitData.itemHistory.clear();
-                    FileOperation.mqtt_clear_files();
-
-                    historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
-                    listView.setAdapter(historyAdapter);
-                }*/
+                }
             }
         };
 
-        /*if (!isRegister) {
+        if (!isRegister) {
             filter = new IntentFilter();
-            filter.addAction(Constants.ACTION.MQTT_GET_HISTORY_CONNECTION_INFO);
-            filter.addAction(Constants.ACTION.MQTT_GET_HISTORY_MATCH_MESSAGE);
-            filter.addAction(Constants.ACTION.MQTT_CLEAR_HISTORY);
+            filter.addAction(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
             context.registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");
-        }*/
+        }
 
 
 
@@ -162,6 +153,9 @@ public class HistoryFragment extends Fragment {
             historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
             listView.setAdapter(historyAdapter);
         }*/
+
+        historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
+        listView.setAdapter(historyAdapter);
 
 
         super.onResume();

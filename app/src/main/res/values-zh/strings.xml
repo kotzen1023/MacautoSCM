@@ -2,4 +2,7 @@
     <string name="app_name">皇田 SCM</string>
     <string name="scm_history_tab">訊息通知</string>
     <string name="scm_setting">設定</string>
+    <string name="scm_show_title">標題</string>
+    <string name="scm_show_content">內容</string>
+    <string name="scm_show_date">日期</string>
 </resources>

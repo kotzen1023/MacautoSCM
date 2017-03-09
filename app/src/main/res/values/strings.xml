@@ -2,4 +2,7 @@
     <string name="app_name">Macauto SCM</string>
     <string name="scm_history_tab">Notification</string>
     <string name="scm_setting">Settings</string>
+    <string name="scm_show_title">Title</string>
+    <string name="scm_show_content">Content</string>
+    <string name="scm_show_date">Date</string>
 </resources>

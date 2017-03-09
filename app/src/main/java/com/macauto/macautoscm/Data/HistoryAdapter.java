@@ -81,7 +81,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
 
             if (!item.getTitle().equals("")) {
-                holder.msg.setText("["+item.getTitle()+"]"+item.getMsg());
+                holder.msg.setText(item.getTitle());
             } else {
                 holder.msg.setText(item.getMsg());
             }
@@ -89,20 +89,20 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
             holder.date.setText(item.getDate());
 
-            /*if (item.getAction() == 3) {
+            if (item.getAction() == 3) {
                 //Log.e(TAG, "action = " + item.getAction());
-                holder.action.setImageResource(R.drawable.ic_info_outline_white_48dp);
+                //holder.action.setImageResource(R.drawable.ic_info_outline_white_48dp);
             } else if (item.getAction() == 1) {//subscribe
                 //Log.e(TAG, "action = " + item.getAction());
-                holder.action.setImageResource(R.drawable.ic_subject_white_48dp);
+                //holder.action.setImageResource(R.drawable.ic_subject_white_48dp);
             } else if (item.getAction() == 2) { //publish
                 //Log.e(TAG, "action = " + item.getAction());
-                holder.action.setImageResource(R.drawable.ic_cast_white_48dp);
+                //holder.action.setImageResource(R.drawable.ic_cast_white_48dp);
             }
             else {
                 //Log.e(TAG, "action = " + item.getAction());
-                holder.action.setImageResource(R.drawable.ic_compare_arrows_white_48dp);
-            }*/
+                holder.action.setImageResource(R.drawable.ic_announcement_black_48dp);
+            }
         }
 
 
