@@ -104,7 +104,7 @@ public class FileOperation {
         return ret;
     }
 
-    public static boolean clear_record(String fileName) {
+    public static boolean clear_record() {
         boolean ret = true;
 
         if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
@@ -116,7 +116,7 @@ public class FileOperation {
         File folder = new File(RootDirectory.getAbsolutePath() + "/.macautoSCM");
 
         if (folder.exists()) {
-            File matchRecord = new File(folder+"/"+fileName);
+            File matchRecord = new File(folder+"/"+"msg");
 
 
             if (!matchRecord.exists()) {

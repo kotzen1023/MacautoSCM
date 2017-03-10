@@ -6,31 +6,29 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Spanned;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.macauto.macautoscm.Data.Constants;
 import com.macauto.macautoscm.Data.HistoryAdapter;
 import com.macauto.macautoscm.Data.HistoryItem;
 import com.macauto.macautoscm.Data.InitData;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 
-public class HistoryFragment extends Fragment {
+import static com.macauto.macautoscm.Data.FileOperation.clear_record;
+
+
+public class HistoryActivity extends AppCompatActivity {
     private static final String TAG = HistoryFragment.class.getName();
 
     private Context context;
@@ -39,7 +37,7 @@ public class HistoryFragment extends Fragment {
     public ArrayAdapter<Spanned> arrayAdapter = null;
     public ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
     public HistoryAdapter historyAdapter;
-    private ChangeListener changeListener = null;
+
     //private Connection connection;
 
     private static BroadcastReceiver mReceiver = null;
@@ -47,23 +45,17 @@ public class HistoryFragment extends Fragment {
 
     //private Spanned[] history;
     private static boolean isRegisterChangeListener = false;
+    private MenuItem item_clear;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.history_fragment);
 
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.history_fragment, container, false);
-
-        context = getContext();
+        context = getBaseContext();
         IntentFilter filter;
 
-        listView = (ListView) view.findViewById(R.id.listViewHistory);
+        listView = (ListView) findViewById(R.id.listViewHistory);
         listView.setTextFilterEnabled(true);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -111,35 +103,16 @@ public class HistoryFragment extends Fragment {
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");
         }
-
-
-
-
-
-        return view;
     }
 
     @Override
-    public void onDestroyView() {
+    protected void onDestroy() {
         Log.i(TAG, "onDestroy");
 
-        if (isRegister && mReceiver != null) {
-            try {
-                context.unregisterReceiver(mReceiver);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            isRegister = false;
-            mReceiver = null;
-        }
 
-        /*if (InitData.connection != null && isRegisterChangeListener) {
-            InitData.connection.removeChangeListener(null);
-            changeListener = null;
-            isRegisterChangeListener = false;
-        }*/
 
-        super.onDestroyView();
+        super.onDestroy();
+
     }
 
     @Override
@@ -166,44 +139,35 @@ public class HistoryFragment extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        super.onActivityCreated(savedInstanceState);
+        item_clear = menu.findItem(R.id.action_clear);
 
+        return true;
     }
 
-    public void toast(String message) {
-        Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-        toast.show();
-    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-    private class ChangeListener implements PropertyChangeListener {
+        //Intent intent;
+        switch (item.getItemId()) {
+            case R.id.action_clear:
 
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            // connection object has change refresh the UI
+                Log.i(TAG, "item_clear");
+                InitData.notifyList.clear();
+                clear_record();
 
-
-
-            getActivity().runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    /*arrayAdapter.clear();
-                    arrayAdapter.addAll(Connections.getInstance(getActivity()).getConnection(InitData.clientHandle).history());
-                    arrayAdapter.notifyDataSetChanged();*/
-
-
-                    //historyAdapter.clear();
-                    //historyAdapter.addAll(historyItemArrayList);
-                    historyAdapter.notifyDataSetChanged();
-
-                }
-            });
-
+                historyAdapter.notifyDataSetChanged();
+                //Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
+                //sendBroadcast(deleteIntent);
+                break;
         }
+        return true;
     }
 
+    @Override
+    public void onBackPressed() {
 
+    }
 }

@@ -22,6 +22,7 @@
         </activity>
         <activity android:name=".MainMenu"/>
         <activity android:name=".HistoryShow"/>
+        <activity android:name=".HistoryActivity"/>
 
         <receiver android:enabled="true" android:name=".Receiver.Receive_BootCompleted">
             <intent-filter>

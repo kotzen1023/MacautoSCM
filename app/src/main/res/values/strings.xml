@@ -5,4 +5,5 @@
     <string name="scm_show_title">Title</string>
     <string name="scm_show_content">Content</string>
     <string name="scm_show_date">Date</string>
+    <string name="scm_clear">Clear</string>
 </resources>
