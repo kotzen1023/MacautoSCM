@@ -6,4 +6,9 @@
     <string name="scm_show_content">Content</string>
     <string name="scm_show_date">Date</string>
     <string name="scm_clear">Clear</string>
+    <string name="scm_warning">Warning</string>
+    <string name="scm_confirm">Confirm</string>
+    <string name="scm_cancel">Cancel</string>
+    <string name="scm_clear_msg">Clear all message?</string>
+    <string name="scm_search">Search</string>
 </resources>

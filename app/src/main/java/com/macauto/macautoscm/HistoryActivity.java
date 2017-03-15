@@ -1,21 +1,21 @@
 package com.macauto.macautoscm;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Spanned;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.macauto.macautoscm.Data.Constants;
@@ -34,8 +34,9 @@ public class HistoryActivity extends AppCompatActivity {
     private Context context;
     private ListView listView;
 
-    public ArrayAdapter<Spanned> arrayAdapter = null;
-    public ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
+    //public ArrayAdapter<Spanned> arrayAdapter = null;
+    //public ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
+    public ArrayList<HistoryItem> sortedNotifyList = new ArrayList<>();
     public HistoryAdapter historyAdapter;
 
     //private Connection connection;
@@ -44,8 +45,9 @@ public class HistoryActivity extends AppCompatActivity {
     private static boolean isRegister = false;
 
     //private Spanned[] history;
-    private static boolean isRegisterChangeListener = false;
-    private MenuItem item_clear;
+    //private static boolean isRegisterChangeListener = false;
+    //private MenuItem item_clear;
+    //private static SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,16 +84,10 @@ public class HistoryActivity extends AppCompatActivity {
 
                     historyAdapter.notifyDataSetChanged();
 
-                    /*Log.d(TAG, "ConnectionDetails.clientHandle = "+ InitData.clientHandle);
-                    //connection = Connections.getInstance(context).getConnection(InitData.clientHandle);
-                    if (InitData.connection != null) {
 
-
-                        historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
-                        listView.setAdapter(historyAdapter);
-
-                    }*/
-
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {
+                    historyAdapter = new HistoryAdapter(context, R.layout.history_item, sortedNotifyList);
+                    listView.setAdapter(historyAdapter);
                 }
             }
         };
@@ -99,6 +95,7 @@ public class HistoryActivity extends AppCompatActivity {
         if (!isRegister) {
             filter = new IntentFilter();
             filter.addAction(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
+            filter.addAction(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE);
             context.registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");
@@ -108,6 +105,16 @@ public class HistoryActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         Log.i(TAG, "onDestroy");
+
+        if (isRegister && mReceiver != null) {
+            try {
+                context.unregisterReceiver(mReceiver);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+            isRegister = false;
+            mReceiver = null;
+        }
 
 
 
@@ -131,8 +138,15 @@ public class HistoryActivity extends AppCompatActivity {
             listView.setAdapter(historyAdapter);
         }*/
 
-        historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
-        listView.setAdapter(historyAdapter);
+        if (sortedNotifyList.size() > 0) {
+            historyAdapter = new HistoryAdapter(context, R.layout.history_item, sortedNotifyList);
+            listView.setAdapter(historyAdapter);
+        } else {
+            historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
+            listView.setAdapter(historyAdapter);
+        }
+
+
 
 
         super.onResume();
@@ -142,7 +156,20 @@ public class HistoryActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        item_clear = menu.findItem(R.id.action_clear);
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        //item_clear = menu.findItem(R.id.action_clear);
+
+        try {
+            //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_keeper));
+            searchView.setOnQueryTextListener(queryListener);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         return true;
     }
@@ -155,10 +182,29 @@ public class HistoryActivity extends AppCompatActivity {
             case R.id.action_clear:
 
                 Log.i(TAG, "item_clear");
-                InitData.notifyList.clear();
-                clear_record();
+                AlertDialog.Builder confirmdialog = new AlertDialog.Builder(HistoryActivity.this);
+                confirmdialog.setIcon(R.drawable.ic_warning_black_48dp);
+                confirmdialog.setTitle(getResources().getString(R.string.scm_warning));
+                confirmdialog.setMessage(getResources().getString(R.string.scm_clear_msg));
+                confirmdialog.setPositiveButton(getResources().getString(R.string.scm_confirm), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
 
-                historyAdapter.notifyDataSetChanged();
+                        InitData.notifyList.clear();
+                        clear_record();
+
+                        historyAdapter.notifyDataSetChanged();
+
+                    }
+                });
+                confirmdialog.setNegativeButton(getResources().getString(R.string.scm_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                });
+                confirmdialog.show();
+
+
                 //Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
                 //sendBroadcast(deleteIntent);
                 break;
@@ -170,4 +216,58 @@ public class HistoryActivity extends AppCompatActivity {
     public void onBackPressed() {
 
     }
+
+    final private android.support.v7.widget.SearchView.OnQueryTextListener queryListener = new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        //searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            Intent intent;
+
+            //ArrayList<MeetingListItem> list = new ArrayList<>();
+            sortedNotifyList.clear();
+            if (!newText.equals("")) {
+
+
+
+                //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
+                for (int i = 0; i < InitData.notifyList.size(); i++) {
+                    if (InitData.notifyList.get(i).getTitle().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    } else if (InitData.notifyList.get(i).getMsg().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    } else if (InitData.notifyList.get(i).getDate().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    }
+                }
+
+                //passwordKeeperArrayAdapter = new PasswordKeeperArrayAdapter(Password_Keeper.this, R.layout.passwd_keeper_browsw_item, list);
+                //listView.setAdapter(passwordKeeperArrayAdapter);
+
+            } else {
+                //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
+
+                for (int i = 0; i < InitData.notifyList.size(); i++) {
+                    sortedNotifyList.add(InitData.notifyList.get(i));
+                }
+
+
+                //passwordKeeperArrayAdapter = new PasswordKeeperArrayAdapter(Password_Keeper.this, R.layout.passwd_keeper_browsw_item, list);
+                //listView.setAdapter(passwordKeeperArrayAdapter);
+            }
+
+            //meetingArrayAdapter = new MeetingArrayAdapter(context, R.layout.meeting_list_item, list);
+            //AllFragment.resetAdapter(list);
+            //AllFragment.listView.setAdapter(AllFragment.meetingArrayAdapter);
+            intent = new Intent(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE);
+            sendBroadcast(intent);
+
+
+            return false;
+        }
+    };
 }
