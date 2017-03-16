@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/img_tabtxt"
         android:layout_marginTop="2dp"
-        android:textSize="13dp"
+        android:textSize="13sp"
         android:layout_centerHorizontal="true"
         android:text="Medium Text"
         android:textColor="@android:color/white"
@@ -21,7 +21,7 @@
     <ImageView
         android:id="@+id/img_tabtxt"
         android:layout_width="33dp"
-        android:layout_height="30dp"
+        android:layout_height="30sp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
 
