@@ -23,7 +23,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     private int layoutResourceId;
     private ArrayList<HistoryItem> items = new ArrayList<>();
     public static SparseBooleanArray mSparseBooleanArray;
-    private static int contact_count = 0;
+    //private static int contact_count = 0;
 
     public HistoryAdapter(Context context, int textViewResourceId,
                           ArrayList<HistoryItem> objects) {

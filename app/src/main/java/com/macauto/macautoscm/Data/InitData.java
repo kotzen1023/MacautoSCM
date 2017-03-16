@@ -4,9 +4,9 @@ package com.macauto.macautoscm.Data;
 import android.content.Context;
 import android.util.Log;
 
-import java.util.ArrayDeque;
+
 import java.util.ArrayList;
-import java.util.Deque;
+
 
 public class InitData {
     private static final String TAG = InitData.class.getName();
