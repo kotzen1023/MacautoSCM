@@ -29,7 +29,7 @@ import static com.macauto.macautoscm.Data.FileOperation.clear_record;
 
 
 public class HistoryActivity extends AppCompatActivity {
-    private static final String TAG = HistoryFragment.class.getName();
+    private static final String TAG = HistoryActivity.class.getName();
 
     private Context context;
     private ListView listView;

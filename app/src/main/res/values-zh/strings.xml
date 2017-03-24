@@ -11,4 +11,13 @@
     <string name="scm_cancel">取消</string>
     <string name="scm_clear_msg">清除所有訊息？</string>
     <string name="scm_search">搜尋</string>
+    <string name="scm_login_account">帳號</string>
+    <string name="scm_login_passord">密碼</string>
+    <string name="scm_login_keep_account_password">記住我的帳號密碼</string>
+    <string name="scm_login_account_empty">帳號不能為空</string>
+    <string name="scm_login_password_empty">密碼不能為空</string>
+    <string name="scm_login_dialog_logging">登入中...</string>
+    <string name="scm_setting_logout">登出</string>
+    <string name="scm_more_logout_title">登出</string>
+    <string name="scm_more_logout_descrypt">從此帳號登出?登出後將不再收到通知訊息.</string>
 </resources>

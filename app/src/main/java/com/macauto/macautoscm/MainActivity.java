@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
     private Context context;
+
+    static SharedPreferences pref ;
+    static SharedPreferences.Editor editor;
+    private static final String FILE_NAME = "Preference";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,15 +61,33 @@ public class MainActivity extends AppCompatActivity {
         InitData initData = new InitData(context);
         initData.init(context);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("test");
+        //check is account and password exist
+        pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        String account = pref.getString("ACCOUNT", "");
+        String password = pref.getString("PASSWORD", "");
 
-
-
-        Intent intent = new Intent(MainActivity.this, HistoryActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
+
+        /*if (account.equals("") || password.equals("")) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        } else { //account
+            //make subscribe
+            //FirebaseMessaging.getInstance().subscribeToTopic("test");
+            FirebaseMessaging.getInstance().subscribeToTopic("test");
+
+            Intent intent = new Intent(MainActivity.this, MainMenu.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        }*/
+
+
+
     }
 
     private  boolean checkAndRequestPermissions() {

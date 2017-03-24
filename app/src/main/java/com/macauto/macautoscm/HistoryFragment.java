@@ -34,8 +34,9 @@ public class HistoryFragment extends Fragment {
     private ListView listView;
 
     public ArrayAdapter<Spanned> arrayAdapter = null;
-    public ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
-    public HistoryAdapter historyAdapter;
+    public static ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
+    public static ArrayList<HistoryItem> sortedNotifyList = new ArrayList<>();
+    public static HistoryAdapter historyAdapter;
     private ChangeListener changeListener = null;
     //private Connection connection;
 
@@ -87,16 +88,10 @@ public class HistoryFragment extends Fragment {
 
                     historyAdapter.notifyDataSetChanged();
 
-                    /*Log.d(TAG, "ConnectionDetails.clientHandle = "+ InitData.clientHandle);
-                    //connection = Connections.getInstance(context).getConnection(InitData.clientHandle);
-                    if (InitData.connection != null) {
 
-
-                        historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
-                        listView.setAdapter(historyAdapter);
-
-                    }*/
-
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {
+                    historyAdapter = new HistoryAdapter(context, R.layout.history_item, sortedNotifyList);
+                    listView.setAdapter(historyAdapter);
                 }
             }
         };
@@ -104,6 +99,7 @@ public class HistoryFragment extends Fragment {
         if (!isRegister) {
             filter = new IntentFilter();
             filter.addAction(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
+            filter.addAction(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE);
             context.registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");
@@ -130,12 +126,6 @@ public class HistoryFragment extends Fragment {
             mReceiver = null;
         }
 
-        /*if (InitData.connection != null && isRegisterChangeListener) {
-            InitData.connection.removeChangeListener(null);
-            changeListener = null;
-            isRegisterChangeListener = false;
-        }*/
-
         super.onDestroyView();
     }
 
@@ -149,14 +139,13 @@ public class HistoryFragment extends Fragment {
 
         Log.i(TAG, "onResume");
 
-        /*if (InitData.connection != null) {
-
-            historyAdapter = new HistoryAdapter(context, R.layout.mqtt_list_view_history_item, InitData.itemHistory);
+        if (sortedNotifyList.size() > 0) {
+            historyAdapter = new HistoryAdapter(context, R.layout.history_item, sortedNotifyList);
             listView.setAdapter(historyAdapter);
-        }*/
-
-        historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
-        listView.setAdapter(historyAdapter);
+        } else {
+            historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
+            listView.setAdapter(historyAdapter);
+        }
 
 
         super.onResume();

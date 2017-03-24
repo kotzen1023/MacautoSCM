@@ -11,4 +11,13 @@
     <string name="scm_cancel">Cancel</string>
     <string name="scm_clear_msg">Clear all message?</string>
     <string name="scm_search">Search</string>
+    <string name="scm_login_account">Account</string>
+    <string name="scm_login_passord">Password</string>
+    <string name="scm_login_keep_account_password">Keep account and password</string>
+    <string name="scm_login_account_empty">Account can not be empty</string>
+    <string name="scm_login_password_empty">Password can not be empty</string>
+    <string name="scm_login_dialog_logging">Login...</string>
+    <string name="scm_setting_logout">Logout</string>
+    <string name="scm_more_logout_title">Logout</string>
+    <string name="scm_more_logout_descrypt">Logout from this account? You won\'t receive message after logout.</string>
 </resources>

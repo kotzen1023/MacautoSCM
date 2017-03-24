@@ -1,10 +1,16 @@
 package com.macauto.macautoscm;
 
 import android.app.ActivityManager;
+import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,11 +20,20 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
 
+import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.Data.InitData;
+
+import static com.macauto.macautoscm.Data.FileOperation.clear_record;
+import static com.macauto.macautoscm.HistoryFragment.historyAdapter;
+import static com.macauto.macautoscm.HistoryFragment.sortedNotifyList;
+
 public class MainMenu extends AppCompatActivity {
     private static final String TAG = MainMenu.class.getName();
 
     private static final String TAB_1_TAG = "tab_1";
     private static final String TAB_2_TAG = "tab_2";
+
+    public static MenuItem item_clear, item_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +94,16 @@ public class MainMenu extends AppCompatActivity {
 
                 switch (tabId) {
                     case "tab_1":
-                        //if (item_clear != null)
-                        //    item_clear.setVisible(true);
+                        if (item_clear != null)
+                            item_clear.setVisible(true);
+                        if (item_search != null)
+                            item_search.setVisible(true);
                         break;
                     case "tab_2":
-                        //if (item_clear != null)
-                        //    item_clear.setVisible(false);
-                        break;
-                    case "tab_3":
-
+                        if (item_clear != null)
+                            item_clear.setVisible(false);
+                        if (item_search != null)
+                            item_search.setVisible(false);
                         break;
 
                     default:
@@ -112,9 +128,25 @@ public class MainMenu extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getMenuInflater().inflate(R.menu.mqtt_main, menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
 
-        //item_clear = menu.findItem(R.id.action_clear);
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        MenuItem searchMenuItem = menu.findItem(R.id.action_search);
+        //SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        item_search = menu.findItem(R.id.action_search);
+        item_clear = menu.findItem(R.id.action_clear);
+
+        //item_find.setVisible(false);
+
+        try {
+            //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_keeper));
+            searchView.setOnQueryTextListener(queryListener);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
         return true;
     }
@@ -123,14 +155,37 @@ public class MainMenu extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         //Intent intent;
-        /*switch (item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.action_clear:
 
                 Log.i(TAG, "item_clear");
-                Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
-                sendBroadcast(deleteIntent);
+                AlertDialog.Builder confirmdialog = new AlertDialog.Builder(MainMenu.this);
+                confirmdialog.setIcon(R.drawable.ic_warning_black_48dp);
+                confirmdialog.setTitle(getResources().getString(R.string.scm_warning));
+                confirmdialog.setMessage(getResources().getString(R.string.scm_clear_msg));
+                confirmdialog.setPositiveButton(getResources().getString(R.string.scm_confirm), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        InitData.notifyList.clear();
+                        clear_record();
+
+                        historyAdapter.notifyDataSetChanged();
+
+                    }
+                });
+                confirmdialog.setNegativeButton(getResources().getString(R.string.scm_cancel), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+
+
+                    }
+                });
+                confirmdialog.show();
+
+
+                //Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
+                //sendBroadcast(deleteIntent);
                 break;
-        }*/
+        }
         return true;
     }
 
@@ -182,4 +237,57 @@ public class MainMenu extends AppCompatActivity {
         return false;
     }
 
+    final private android.support.v7.widget.SearchView.OnQueryTextListener queryListener = new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        //searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            Intent intent;
+
+            //ArrayList<MeetingListItem> list = new ArrayList<>();
+            sortedNotifyList.clear();
+            if (!newText.equals("")) {
+
+
+
+                //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
+                for (int i = 0; i < InitData.notifyList.size(); i++) {
+                    if (InitData.notifyList.get(i).getTitle().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    } else if (InitData.notifyList.get(i).getMsg().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    } else if (InitData.notifyList.get(i).getDate().contains(newText)) {
+                        sortedNotifyList.add(InitData.notifyList.get(i));
+                    }
+                }
+
+                //passwordKeeperArrayAdapter = new PasswordKeeperArrayAdapter(Password_Keeper.this, R.layout.passwd_keeper_browsw_item, list);
+                //listView.setAdapter(passwordKeeperArrayAdapter);
+
+            } else {
+                //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
+
+                for (int i = 0; i < InitData.notifyList.size(); i++) {
+                    sortedNotifyList.add(InitData.notifyList.get(i));
+                }
+
+
+                //passwordKeeperArrayAdapter = new PasswordKeeperArrayAdapter(Password_Keeper.this, R.layout.passwd_keeper_browsw_item, list);
+                //listView.setAdapter(passwordKeeperArrayAdapter);
+            }
+
+            //meetingArrayAdapter = new MeetingArrayAdapter(context, R.layout.meeting_list_item, list);
+            //AllFragment.resetAdapter(list);
+            //AllFragment.listView.setAdapter(AllFragment.meetingArrayAdapter);
+            intent = new Intent(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE);
+            sendBroadcast(intent);
+
+
+            return false;
+        }
+    };
 }

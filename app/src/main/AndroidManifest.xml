@@ -23,6 +23,7 @@
         <activity android:name=".MainMenu"/>
         <activity android:name=".HistoryShow"/>
         <activity android:name=".HistoryActivity"/>
+        <activity android:name=".LoginActivity"/>
 
         <receiver android:enabled="true" android:name=".Receiver.Receive_BootCompleted">
             <intent-filter>

@@ -8,5 +8,8 @@ public class Constants {
         String GET_START_SCM_FIREBASE_MESSAGE_ACTION = "com.macauto.MacautoSCM.GetStartSCMFirebaseMessageAction";
         String GET_NEW_NOTIFICATION_ACTION = "com.macauto.MacautoSCM.GetNewNotificationAction";
         String GET_HISTORY_LIST_SORT_COMPLETE = "com.macauto.MacautoSCM.GetHistoryListSortComplete";
+        String CHECK_MANUFACTURER_EXIST_COMPLETE = "com.macauto.MacautoSCM.CheckManufacturerExistComplete";
+        String CHECK_MANUFACTURER_EXIST_FAIL = "com.macauto.MacautoSCM.CheckManufacturerExistFail";
+        String SOAP_CONNECTION_FAIL = "com.macauto.MacautoSCM.SoapConnectionFail";
     }
 }
