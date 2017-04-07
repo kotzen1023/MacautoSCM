@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.util.Log;
 
@@ -15,8 +16,16 @@ import com.macauto.macautoscm.Service.ScmInstanceIDService;
 public class Receive_BootCompleted extends BroadcastReceiver {
     private static final String TAG = Receive_BootCompleted.class.getName();
 
+    static SharedPreferences pref ;
+    //static SharedPreferences.Editor editor;
+    private static final String FILE_NAME = "Preference";
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        pref = context.getSharedPreferences(FILE_NAME, context.MODE_PRIVATE);
+        String account = pref.getString("ACCOUNT", "");
+        String password = pref.getString("PASSWORD", "");
+
         if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
 
             Log.e(TAG, "receive ACTION_BOOT_COMPLETED");
@@ -32,6 +41,7 @@ public class Receive_BootCompleted extends BroadcastReceiver {
             //alarm service
             Intent firebaseMessagingService = new Intent(context, ScmFirebaseMessagingService.class);
             context.startService(firebaseMessagingService);
+
 
         } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_START_SCM_INSTANCE_ID_ACTION)) {
             Log.e(TAG, "receive GET_START_SCM_INSTANCE_ID_ACTION");

@@ -6,9 +6,12 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -16,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
@@ -41,6 +46,7 @@ public class MainMenu extends AppCompatActivity {
 
         setContentView(R.layout.main_menu);
 
+        Window window;
         //init folder
         //FileOperation.mqtt_init_folder();
 
@@ -54,9 +60,37 @@ public class MainMenu extends AppCompatActivity {
             startService(InitData.mqttServiceIntent);
         }*/
 
+
+
+        ActionBar actionBar = getSupportActionBar();
+        //int color = 0xff3964f4;
+
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_launcher);
+            actionBar.setTitle(getResources().getString(R.string.app_name));
+        }
+
+        window = getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
+        } else
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background, getTheme())));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic, getTheme()));
+        }
+
         InitView();
-
-
     }
 
     @Override
@@ -75,14 +109,20 @@ public class MainMenu extends AppCompatActivity {
         mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
 
+        //mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_1_TAG),
+        //        R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_history_tab), R.drawable.ic_history_white_48dp), HistoryFragment.class, null);
         mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_1_TAG),
-                R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_history_tab), R.drawable.ic_history_white_48dp), HistoryFragment.class, null);
+                R.drawable.tab_indicator_gen, "", R.drawable.mail), HistoryFragment.class, null);
 
+
+
+
+        //mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_2_TAG),
+        //        R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_setting), R.drawable.ic_settings_white_48dp), SettingsFragment.class, null);
         mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_2_TAG),
-                R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_setting), R.drawable.ic_settings_white_48dp), SettingsFragment.class, null);
+                R.drawable.tab_indicator_gen, "", R.drawable.gear), SettingsFragment.class, null);
 
-        //mTabHost.addTab(setIndicator(ConnectionDetails.this, mTabHost.newTabSpec(TAB_3_TAG),
-        //        R.drawable.tab_indicator_gen, getResources().getString(R.string.macauto_mqtt_tab_publish), R.drawable.ic_cast_white_48dp), PublishFragment.class, null);
+
 
 
 
@@ -217,10 +257,10 @@ public class MainMenu extends AppCompatActivity {
                                          int resid, String string, int genresIcon) {
         View v = LayoutInflater.from(ctx).inflate(R.layout.tab_item, null);
         v.setBackgroundResource(resid);
-        TextView tv = (TextView)v.findViewById(R.id.txt_tabtxt);
+        //TextView tv = (TextView)v.findViewById(R.id.txt_tabtxt);
         ImageView img = (ImageView)v.findViewById(R.id.img_tabtxt);
 
-        tv.setText(string);
+        //tv.setText(string);
         img.setBackgroundResource(genresIcon);
         return spec.setIndicator(v);
     }

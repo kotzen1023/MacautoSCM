@@ -101,7 +101,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
             }
             else {
                 //Log.e(TAG, "action = " + item.getAction());
-                holder.action.setImageResource(R.drawable.ic_announcement_black_48dp);
+                holder.action.setImageResource(R.drawable.star_green);
             }
         }
 

@@ -7,15 +7,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.Service.LoginCheckService;
 
 public class LoginActivity extends AppCompatActivity{
     private static final String TAG = LoginActivity.class.getName();
@@ -47,6 +56,34 @@ public class LoginActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
+
+        ActionBar actionBar = getSupportActionBar();
+        //int color = 0xff3964f4;
+
+        if (actionBar != null) {
+            actionBar.setDisplayShowHomeEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeAsUpIndicator(R.mipmap.ic_launcher);
+            actionBar.setTitle(getResources().getString(R.string.app_name));
+        }
+
+        Window window = getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
+        } else
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background, getTheme())));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic, getTheme()));
+        }
 
         IntentFilter filter;
 
@@ -142,9 +179,9 @@ public class LoginActivity extends AppCompatActivity{
                     login_error_count++;
                 } else {
 
-                    Intent mainIntent = new Intent(LoginActivity.this, MainMenu.class);
+                    /*Intent mainIntent = new Intent(LoginActivity.this, MainMenu.class);
                     startActivity(mainIntent);
-                    finish();
+                    finish();*/
 
                     /*editor = pref.edit();
                     editor.putString("ACCOUNT", editText_account.getText().toString());
@@ -152,9 +189,10 @@ public class LoginActivity extends AppCompatActivity{
                     editor.apply();*/
 
 
-                    /*Intent loginIntent = new Intent(Login.this, LoginCheckService.class);
+                    Intent loginIntent = new Intent(LoginActivity.this, LoginCheckService.class);
                     loginIntent.putExtra("user_no", editText_account.getText().toString());
-                    loginIntent.setAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION);
+                    loginIntent.putExtra("password", editText_password.getText().toString());
+                    //loginIntent.setAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION);
                     startService(loginIntent);
 
                     loadDialog = new ProgressDialog(LoginActivity.this);
@@ -163,7 +201,7 @@ public class LoginActivity extends AppCompatActivity{
                     loadDialog.setIndeterminate(false);
                     loadDialog.setCancelable(false);
 
-                    loadDialog.show();*/
+                    loadDialog.show();
                 }
                 /*Intent mainIntent = new Intent(Login.this, MainMenu.class);
                 startActivity(mainIntent);
@@ -180,11 +218,20 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
-        /*mReceiver = new BroadcastReceiver() {
+        mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_EMPLOYEE_EXIST_COMPLETE)) {
-                    Log.d(TAG, "receive brocast !");
+                if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE)) {
+                    Log.d(TAG, "receive CHECK_MANUFACTURER_LOGIN_COMPLETE!");
+
+                    //save account
+                    editor = pref.edit();
+                    editor.putString("ACCOUNT", editText_account.getText().toString());
+                    editor.putString("PASSWORD", editText_password.getText().toString());
+                    editor.apply();
+
+                    FirebaseMessaging.getInstance().subscribeToTopic(editText_account.getText().toString());
+
                     if (isRegister && mReceiver != null) {
                         try {
                             unregisterReceiver(mReceiver);
@@ -194,33 +241,36 @@ public class LoginActivity extends AppCompatActivity{
                         isRegister = false;
                         mReceiver = null;
                     }
-                    Intent mainIntent = new Intent(Login.this, MainMenu.class);
+
+                    Intent mainIntent = new Intent(LoginActivity.this, MainMenu.class);
                     startActivity(mainIntent);
                     finish();
-                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_EMPLOYEE_EXIST_FAIL)) {
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL)) {
+                    Log.e(TAG, "receive CHECK_MANUFACTURER_LOGIN_FAIL!");
                     if (loadDialog != null)
                         loadDialog.dismiss();
-                    toast(getResources().getString(R.string.macauto_login_loginfail));
+                    toast(getResources().getString(R.string.scm_login_fail));
                 } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.SOAP_CONNECTION_FAIL)) {
+                    Log.e(TAG, "receive SOAP_CONNECTION_FAIL!");
                     if (loadDialog != null)
                         loadDialog.dismiss();
-                    toast(getResources().getString(R.string.macauto_login_soap_connect_fail));
+                    toast(getResources().getString(R.string.scm_soap_error));
                 }
             }
         };
 
         if (!isRegister) {
             filter = new IntentFilter();
-            filter.addAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_COMPLETE);
-            filter.addAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_FAIL);
+            filter.addAction(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
+            filter.addAction(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
             filter.addAction(Constants.ACTION.SOAP_CONNECTION_FAIL);
             registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");
-        }*/
+        }
 
         /*if (autologin) {
-            Intent loginIntent = new Intent(Login.this, LoginCheckService.class);
+            Intent loginIntent = new Intent(LoginActivity.this, LoginCheckService.class);
             loginIntent.putExtra("user_no", editText_account.getText().toString());
             loginIntent.setAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION);
             startService(loginIntent);

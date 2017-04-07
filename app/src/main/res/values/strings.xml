@@ -20,4 +20,6 @@
     <string name="scm_setting_logout">Logout</string>
     <string name="scm_more_logout_title">Logout</string>
     <string name="scm_more_logout_descrypt">Logout from this account? You won\'t receive message after logout.</string>
+    <string name="scm_login_fail">Login fail</string>
+    <string name="scm_soap_error">Server error</string>
 </resources>

@@ -17,6 +17,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class SettingsFragment extends Fragment {
     private static final String TAG = SettingsFragment.class.getName();
@@ -26,6 +30,9 @@ public class SettingsFragment extends Fragment {
     static SharedPreferences pref ;
     static SharedPreferences.Editor editor;
     private static final String FILE_NAME = "Preference";
+
+    private static String account;
+    private static String password;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,6 +46,8 @@ public class SettingsFragment extends Fragment {
 
         Log.d(TAG, "onCreateView");
 
+
+
         final  View view = inflater.inflate(R.layout.settings_fragment, container, false);
 
         ImageView imgLogout = (ImageView) view.findViewById(R.id.imageViewLogout);
@@ -46,6 +55,10 @@ public class SettingsFragment extends Fragment {
         TextView txtLogout = (TextView) view.findViewById(R.id.textLogout);
 
         context = getContext();
+
+        pref = context.getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        account = pref.getString("ACCOUNT", "");
+        password = pref.getString("PASSWORD", "");
 
         imgLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +70,10 @@ public class SettingsFragment extends Fragment {
                 confirmdialog.setPositiveButton(view.getResources().getString(R.string.scm_confirm), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        pref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+                        //unsubscribe topic
+                        FirebaseMessaging.getInstance().unsubscribeFromTopic(account);
+
+                        pref = context.getSharedPreferences(FILE_NAME, MODE_PRIVATE);
                         editor = pref.edit();
                         editor.putString("ACCOUNT", "");
                         editor.putString("PASSWORD", "");
@@ -89,7 +105,10 @@ public class SettingsFragment extends Fragment {
                 confirmdialog.setPositiveButton(view.getResources().getString(R.string.scm_confirm), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
-                        pref = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+                        //unsubsvribe
+                        FirebaseMessaging.getInstance().subscribeToTopic(account);
+
+                        pref = context.getSharedPreferences(FILE_NAME, MODE_PRIVATE);
                         editor = pref.edit();
                         editor.putString("ACCOUNT", "");
                         editor.putString("PASSWORD", "");

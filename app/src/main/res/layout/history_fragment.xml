@@ -3,11 +3,11 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <View
+    <!--View
         android:id="@+id/viewMQTTHistory"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:background="#b7b7b7" />
+        android:background="#b7b7b7" /-->
 
     <LinearLayout
         android:orientation="vertical"

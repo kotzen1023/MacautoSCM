@@ -3,8 +3,11 @@ package com.macauto.macautoscm;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
@@ -18,14 +21,27 @@ public class HistoryShow extends Activity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent getintent;
+
 
 
         setContentView(R.layout.history_show);
 
+        Window window = getWindow();
+
+        // clear FLAG_TRANSLUCENT_STATUS flag:
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic));
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.setStatusBarColor(getResources().getColor(R.color.status_bar_color_menu_classic, getTheme()));
+        }
+
         ListView listView = (ListView) findViewById(R.id.listViewHistoryShow);
 
-        getintent = getIntent();
+        Intent getintent = getIntent();
 
 
         String type = getintent.getStringExtra("HISTORY_TYPE");
@@ -40,7 +56,7 @@ public class HistoryShow extends Activity {
         Log.i(TAG, "message = "+message);
         Log.i(TAG, "date = "+date);
 
-
+        message = message.replace("#", "\n");
 
         /*Calendar c = Calendar.getInstance();
 

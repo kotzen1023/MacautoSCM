@@ -14,17 +14,21 @@ import org.ksoap2.transport.HttpTransportSE;
 
 
 public class LoginCheckService extends IntentService {
-    public static final String TAG = "LoginCheckService";
+    private static final String TAG = LoginCheckService.class.getName();
+
+    //public static final String MESSAGE_TYPE = "message_type";
 
     public static final String USER_NO = "user_no";
 
+    public static final String PASSWORD = "password";
+
     private static final String NAMESPACE = "http://tempuri.org/"; // 命名空間
 
-    private static final String METHOD_NAME = "check_emp_exist"; // 方法名稱
+    private static final String METHOD_NAME = "login"; // 方法名稱
 
-    private static final String SOAP_ACTION1 = "http://tempuri.org/check_emp_exist"; // SOAP_ACTION
+    private static final String SOAP_ACTION1 = "http://tempuri.org/login"; // SOAP_ACTION
 
-    private static final String URL = "http://60.249.239.47/service.asmx"; // 網址
+    private static final String URL = "http://60.249.239.47:8920/service.asmx"; // 網址
 
     public LoginCheckService() {
         super("LoginCheckService");
@@ -48,6 +52,7 @@ public class LoginCheckService extends IntentService {
         Log.i(TAG, "Handle");
 
         String user_no = intent.getStringExtra(USER_NO);
+        String password = intent.getStringExtra(PASSWORD);
 
         /*if (intent.getAction().equals(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION)) {
             Log.i(TAG, "CHECK_EMPLOYEE_EXIST_ACTION");
@@ -60,17 +65,27 @@ public class LoginCheckService extends IntentService {
                     METHOD_NAME);
 
             // 輸出值，帳號(account)、密碼(password)
+            /*
+
+            DT053      ZD53215
+            QT102     ZQ102503
+            QT093     ZQ93224
+            BT132      ZB132C38
+            AT014      ZAT01412
+            ET087      ZJ489111
+            NT058      ZN589386
+            NT014      ZA23663509
+            ET006      ZET00611
+            BT002      ZBT00207
 
 
-            //request.addProperty("start_date", "");
-            //request.addProperty("end_date", "");
-            //request.addProperty("emp_no", "1050636");
+             */
+
+
+            request.addProperty("message_type", "PO");
             request.addProperty("user_no", user_no);
-            //request.addProperty("emp_name", "方炳強");
-            //request.addProperty("meeting_room_name", "");
-            //request.addProperty("subject_or_content", "");
-            //request.addProperty("meeting_type_id", "");
-            //request.addProperty("passWord", "sunnyhitest");
+            request.addProperty("password", password);
+
 
             // 擴充 SOAP 序列化功能為第11版
 
@@ -94,17 +109,18 @@ public class LoginCheckService extends IntentService {
                 String str= ((SoapFault) envelope.bodyIn).faultstring;
                 Log.e(TAG, str);
             } else {
+                Intent loginResultIntent;
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 Log.d(TAG, String.valueOf(resultsRequestSOAP));
 
-                if (String.valueOf(resultsRequestSOAP).indexOf("true") > 0) {
+                if (String.valueOf(resultsRequestSOAP).indexOf("OK") > 0) {
                     Log.e(TAG, "ret = true");
-                    Intent decryptDoneIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_EXIST_COMPLETE);
-                    sendBroadcast(decryptDoneIntent);
+                    loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
+                    sendBroadcast(loginResultIntent);
                 } else {
                     Log.e(TAG, "ret = false");
-                    Intent decryptDoneIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_EXIST_FAIL);
-                    sendBroadcast(decryptDoneIntent);
+                    loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
+                    sendBroadcast(loginResultIntent);
                 }
                 /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     InputStream stream = new ByteArrayInputStream(String.valueOf(resultsRequestSOAP).getBytes(StandardCharsets.UTF_8));

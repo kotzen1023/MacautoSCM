@@ -4,6 +4,8 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
@@ -27,17 +29,44 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = ScmFirebaseMessagingService.class.getName();
     private Context context;
 
+    static SharedPreferences pref ;
+    //static SharedPreferences.Editor editor;
+    private static final String FILE_NAME = "Preference";
+
     public ScmFirebaseMessagingService() {
-        Log.d(TAG, "ScmFirebaseMessagingService");
+        Log.d(TAG, "ScmFirebaseMessagingService init");
 
         //init folder, file
         FileOperation.init_folder_and_files();
         //read from file
-        context = getBaseContext();
+        //context = this;
+
         InitData initData = new InitData(context);
         initData.init(context);
 
-        FirebaseMessaging.getInstance().subscribeToTopic("test");
+
+
+
+        //FirebaseMessaging.getInstance().subscribeToTopic("test");
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        //Log.e(TAG, "=== ScmFirebaseMessagingService onCreate ===");
+
+        //context = getBaseContext();
+
+        pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
+        String account = pref.getString("ACCOUNT", "");
+        String password = pref.getString("PASSWORD", "");
+
+        //Log.d(TAG, "account = "+account);
+
+        if (!account.equals("") && !password.equals("")) {
+            Log.d(TAG, "*** auto subscrbe topic ***");
+            FirebaseMessaging.getInstance().subscribeToTopic(account);
+        }
     }
 
     @Override
@@ -85,9 +114,12 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
+        int color = 0xff00a2c7;
+
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setColor(color)
+                .setSmallIcon(R.drawable.m_mark)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
