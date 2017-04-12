@@ -22,4 +22,6 @@
     <string name="scm_more_logout_descrypt">從此帳號登出?登出後將不再收到通知訊息.</string>
     <string name="scm_login_fail">登入失敗</string>
     <string name="scm_soap_error">伺服器錯誤</string>
+    <string name="scm_order_no">單號</string>
+    <string name="scm_time">時間:</string>
 </resources>

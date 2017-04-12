@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.macauto.macautoscm.Data.Constants;
 import com.macauto.macautoscm.Service.LoginCheckService;
+
+import java.util.UUID;
 
 public class LoginActivity extends AppCompatActivity{
     private static final String TAG = LoginActivity.class.getName();
@@ -52,6 +55,7 @@ public class LoginActivity extends AppCompatActivity{
     //private boolean contactPermission = false;
 
     //public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+    private static String deviceId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,6 +155,16 @@ public class LoginActivity extends AppCompatActivity{
             public void onClick(View v) {
 
                 Log.e(TAG, "error_count = "+login_error_count);
+                final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+                final String tmDevice, tmSerial, androidId;
+                tmDevice = "" + tm.getDeviceId();
+                tmSerial = "" + tm.getSimSerialNumber();
+                androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+
+                UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+                deviceId = deviceUuid.toString();
+                Log.d(TAG, "UUID = "+deviceId);
 
                 if (login_error_count >= 3) {
                     editor = pref.edit();
@@ -192,6 +206,7 @@ public class LoginActivity extends AppCompatActivity{
                     Intent loginIntent = new Intent(LoginActivity.this, LoginCheckService.class);
                     loginIntent.putExtra("user_no", editText_account.getText().toString());
                     loginIntent.putExtra("password", editText_password.getText().toString());
+                    loginIntent.putExtra("device_id", deviceId);
                     //loginIntent.setAction(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION);
                     startService(loginIntent);
 
@@ -228,6 +243,7 @@ public class LoginActivity extends AppCompatActivity{
                     editor = pref.edit();
                     editor.putString("ACCOUNT", editText_account.getText().toString());
                     editor.putString("PASSWORD", editText_password.getText().toString());
+                    editor.putString("DEVICEID", deviceId);
                     editor.apply();
 
                     FirebaseMessaging.getInstance().subscribeToTopic(editText_account.getText().toString());
@@ -250,6 +266,7 @@ public class LoginActivity extends AppCompatActivity{
                     if (loadDialog != null)
                         loadDialog.dismiss();
                     toast(getResources().getString(R.string.scm_login_fail));
+                    login_error_count++;
                 } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.SOAP_CONNECTION_FAIL)) {
                     Log.e(TAG, "receive SOAP_CONNECTION_FAIL!");
                     if (loadDialog != null)

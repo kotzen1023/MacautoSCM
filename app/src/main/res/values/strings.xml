@@ -22,4 +22,6 @@
     <string name="scm_more_logout_descrypt">Logout from this account? You won\'t receive message after logout.</string>
     <string name="scm_login_fail">Login fail</string>
     <string name="scm_soap_error">Server error</string>
+    <string name="scm_order_no">Order No.</string>
+    <string name="scm_time">Time :</string>
 </resources>

@@ -22,6 +22,8 @@ public class LoginCheckService extends IntentService {
 
     public static final String PASSWORD = "password";
 
+    public static final String DEVICE_ID = "device_id";
+
     private static final String NAMESPACE = "http://tempuri.org/"; // 命名空間
 
     private static final String METHOD_NAME = "login"; // 方法名稱
@@ -53,6 +55,9 @@ public class LoginCheckService extends IntentService {
 
         String user_no = intent.getStringExtra(USER_NO);
         String password = intent.getStringExtra(PASSWORD);
+        String device_id = intent.getStringExtra(DEVICE_ID);
+
+        Log.d(TAG, "device_id = "+device_id);
 
         /*if (intent.getAction().equals(Constants.ACTION.CHECK_EMPLOYEE_EXIST_ACTION)) {
             Log.i(TAG, "CHECK_EMPLOYEE_EXIST_ACTION");
@@ -85,6 +90,7 @@ public class LoginCheckService extends IntentService {
             request.addProperty("message_type", "PO");
             request.addProperty("user_no", user_no);
             request.addProperty("password", password);
+            request.addProperty("ime_code", device_id);
 
 
             // 擴充 SOAP 序列化功能為第11版
@@ -108,6 +114,8 @@ public class LoginCheckService extends IntentService {
             if (envelope.bodyIn instanceof SoapFault) {
                 String str= ((SoapFault) envelope.bodyIn).faultstring;
                 Log.e(TAG, str);
+                Intent decryptDoneIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
+                sendBroadcast(decryptDoneIntent);
             } else {
                 Intent loginResultIntent;
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;

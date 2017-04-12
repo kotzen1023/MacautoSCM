@@ -1,5 +1,7 @@
 package com.macauto.macautoscm;
 
+import android.*;
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -92,8 +94,8 @@ public class MainActivity extends AppCompatActivity {
         FileOperation.init_folder_and_files();
         //read from file
         context = getBaseContext();
-        InitData initData = new InitData(context);
-        initData.init(context);
+        //InitData initData = new InitData(context);
+        //initData.init(context);
 
         //check is account and password exist
         pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
@@ -128,9 +130,15 @@ public class MainActivity extends AppCompatActivity {
 
         int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
+        int phoneStatePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
         List<String> listPermissionsNeeded = new ArrayList<>();
         if (writePermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (phoneStatePermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
         }
 
 
@@ -180,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                 // Initialize the map with both permissions
                 //perms.put(android.Manifest.permission.WRITE_CALENDAR, PackageManager.PERMISSION_GRANTED);
                 perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
                 //perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
@@ -188,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                     // Check for both permissions
                     if (//perms.get(android.Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED &&
                             perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            //&& perms.get(android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
                         ) {
                         Log.d(TAG, "write external permission granted");
                         // process the normal flow
@@ -200,8 +209,8 @@ public class MainActivity extends AppCompatActivity {
 //                        // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (//ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_CALENDAR) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) //||
-                                //ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.CAMERA)
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
                                 ) {
                             showDialogOK("Write external Permission required for this app",
                                     new DialogInterface.OnClickListener() {

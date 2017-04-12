@@ -2,6 +2,7 @@ package com.macauto.macautoscm.Data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -79,29 +80,28 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
         if (item != null) {
 
+            String splitter[] = item.getDate().split(" ");
+            String time_splitter[] = splitter[1].split(":");
 
-            if (!item.getTitle().equals("")) {
-                holder.msg.setText(item.getTitle());
+            if (!item.getMsg().equals("")) {
+                if (splitter.length == 2 && time_splitter.length == 3) {
+                    holder.msg.setText(item.getMsg() + "     " +time_splitter[0] + ":" + time_splitter[1]);
+                } else {
+                    holder.msg.setText(getContext().getResources().getString(R.string.scm_order_no) + " " + item.getMsg() + " " +
+                            getContext().getResources().getString(R.string.scm_time) + item.getDate());
+                }
             } else {
-                holder.msg.setText(item.getMsg());
+                Log.e(TAG, "item.getMsg() == null");
             }
 
+            //holder.date.setText(item.getDate());
 
-            holder.date.setText(item.getDate());
-
-            if (item.getAction() == 3) {
-                //Log.e(TAG, "action = " + item.getAction());
-                //holder.action.setImageResource(R.drawable.ic_info_outline_white_48dp);
-            } else if (item.getAction() == 1) {//subscribe
-                //Log.e(TAG, "action = " + item.getAction());
-                //holder.action.setImageResource(R.drawable.ic_subject_white_48dp);
-            } else if (item.getAction() == 2) { //publish
-                //Log.e(TAG, "action = " + item.getAction());
-                //holder.action.setImageResource(R.drawable.ic_cast_white_48dp);
-            }
-            else {
-                //Log.e(TAG, "action = " + item.getAction());
+            if (item.isRead_sp()) {
                 holder.action.setImageResource(R.drawable.star_green);
+
+            } else {
+                holder.action.setImageResource(R.drawable.ic_fiber_new_black_48dp);
+
             }
         }
 
@@ -114,14 +114,14 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         //TextView jid;
         ImageView action;
         TextView msg;
-        TextView date;
+        //TextView date;
         //CheckBox ckbox;
 
         public ViewHolder(View view) {
 
             this.action = (ImageView) view.findViewById(R.id.title_icon);
             this.msg = (TextView) view.findViewById(R.id.history_msg);
-            this.date = (TextView) view.findViewById(R.id.history_time);
+            //this.date = (TextView) view.findViewById(R.id.history_time);
         }
 
 

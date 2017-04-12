@@ -11,6 +11,10 @@ import android.view.WindowManager;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.Service.GetMessageService;
+import com.macauto.macautoscm.Service.UpdateReadStatusService;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +52,9 @@ public class HistoryShow extends Activity {
         String message = getintent.getStringExtra("HISTORY_MSG");
         String date = getintent.getStringExtra("HISTORY_DATE");
         String title = getintent.getStringExtra("HISTORY_TITLE");
+        String account = getintent.getStringExtra("ACCOUNT");
+        String device_id = getintent.getStringExtra("DEVICEID");
+        String read_sp = getintent.getStringExtra("READ_SP");
 
 
 
@@ -55,8 +62,11 @@ public class HistoryShow extends Activity {
         Log.i(TAG, "title = "+title);
         Log.i(TAG, "message = "+message);
         Log.i(TAG, "date = "+date);
+        Log.i(TAG, "account = "+account);
+        Log.i(TAG, "device id = "+device_id);
+        Log.i(TAG, "read sp = "+read_sp);
 
-        message = message.replace("#", "\n");
+        //message = message.replace("#", "\n");
 
         /*Calendar c = Calendar.getInstance();
 
@@ -80,10 +90,10 @@ public class HistoryShow extends Activity {
         item1.put("show_msg", type);
         items.add(item1);*/
 
-        Map<String, String> item2 = new HashMap<>();
+        /*Map<String, String> item2 = new HashMap<>();
         item2.put("show_header", getResources().getString(R.string.scm_show_title));
         item2.put("show_msg", title);
-        items.add(item2);
+        items.add(item2);*/
 
         Map<String, String> item3 = new HashMap<>();
         item3.put("show_header", getResources().getString(R.string.scm_show_date));
@@ -91,7 +101,7 @@ public class HistoryShow extends Activity {
         items.add(item3);
 
         Map<String, String> item4 = new HashMap<>();
-        item4.put("show_header", getResources().getString(R.string.scm_show_content));
+        item4.put("show_header", getResources().getString(R.string.scm_order_no));
         item4.put("show_msg", message);
         items.add(item4);
 
@@ -152,6 +162,18 @@ public class HistoryShow extends Activity {
         listView.setAdapter(simpleAdapter);
 
         //Log.i(TAG, "item[1] = "+listView.getAdapter().);
+
+        if (read_sp.equals("true")) {
+            Log.d(TAG, "This message had been read.");
+        } else {
+
+            Intent intent = new Intent(HistoryShow.this, UpdateReadStatusService.class);
+            intent.setAction(Constants.ACTION.GET_MESSAGE_LIST_ACTION);
+            intent.putExtra("ACCOUNT", account);
+            intent.putExtra("DEVICE_ID", device_id);
+            intent.putExtra("DOC_NO", message);
+            startService(intent);
+        }
 
     }
 

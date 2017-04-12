@@ -6,6 +6,7 @@ public class HistoryItem {
     private String title;
     private String msg;
     private String date;
+    private boolean read_sp;
 
     public int getAction() {
         return action;
@@ -37,5 +38,13 @@ public class HistoryItem {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public boolean isRead_sp() {
+        return read_sp;
+    }
+
+    public void setRead_sp(boolean read_sp) {
+        this.read_sp = read_sp;
     }
 }

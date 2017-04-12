@@ -178,7 +178,7 @@ public class HistoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         //Intent intent;
-        switch (item.getItemId()) {
+        /*switch (item.getItemId()) {
             case R.id.action_clear:
 
                 Log.i(TAG, "item_clear");
@@ -208,7 +208,7 @@ public class HistoryActivity extends AppCompatActivity {
                 //Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
                 //sendBroadcast(deleteIntent);
                 break;
-        }
+        }*/
         return true;
     }
 

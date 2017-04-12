@@ -9,11 +9,11 @@
         android:icon="@drawable/ic_search_white_48dp">
     </item>
 
-    <item
+    <!--item
         android:id="@+id/action_clear"
         android:title="@string/scm_clear"
         android:icon="@drawable/ic_clear_all_white_48dp"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="ifRoom|withText" /-->
 
 
 </menu>

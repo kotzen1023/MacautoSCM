@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +25,7 @@
         <activity android:name=".HistoryShow"/>
         <activity android:name=".HistoryActivity"/>
         <activity android:name=".LoginActivity"/>
+        <activity android:name=".ErrorTimer"/>
 
         <receiver android:enabled="true" android:name=".Receiver.Receive_BootCompleted">
             <intent-filter>
@@ -42,6 +44,8 @@
             </intent-filter>
         </service>
         <service android:name=".Service.LoginCheckService"/>
+        <service android:name=".Service.GetMessageService"/>
+        <service android:name=".Service.UpdateReadStatusService"/>
     </application>
 
 </manifest>

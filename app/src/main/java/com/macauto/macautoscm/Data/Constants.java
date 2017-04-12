@@ -11,5 +11,7 @@ public class Constants {
         String CHECK_MANUFACTURER_LOGIN_COMPLETE = "com.macauto.MacautoSCM.CheckManufacturerLoginComplete";
         String CHECK_MANUFACTURER_LOGIN_FAIL = "com.macauto.MacautoSCM.CheckManufacturerLoginFail";
         String SOAP_CONNECTION_FAIL = "com.macauto.MacautoSCM.SoapConnectionFail";
+        String GET_MESSAGE_LIST_ACTION = "com.macauto.MacautoSCM.GetMessageListAction";
+        String GET_MESSAGE_LIST_COMPLETE = "com.macauto.MacautoSCM.GetMessageListComplete";
     }
 }

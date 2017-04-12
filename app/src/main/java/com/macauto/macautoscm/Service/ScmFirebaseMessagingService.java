@@ -41,8 +41,8 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
         //read from file
         //context = this;
 
-        InitData initData = new InitData(context);
-        initData.init(context);
+        //InitData initData = new InitData(context);
+        //initData.init(context);
 
 
 

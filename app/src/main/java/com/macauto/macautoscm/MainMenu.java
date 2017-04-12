@@ -38,7 +38,7 @@ public class MainMenu extends AppCompatActivity {
     private static final String TAB_1_TAG = "tab_1";
     private static final String TAB_2_TAG = "tab_2";
 
-    public static MenuItem item_clear, item_search;
+    public static MenuItem item_search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,14 +134,14 @@ public class MainMenu extends AppCompatActivity {
 
                 switch (tabId) {
                     case "tab_1":
-                        if (item_clear != null)
-                            item_clear.setVisible(true);
+                        //if (item_clear != null)
+                        //    item_clear.setVisible(true);
                         if (item_search != null)
                             item_search.setVisible(true);
                         break;
                     case "tab_2":
-                        if (item_clear != null)
-                            item_clear.setVisible(false);
+                        //if (item_clear != null)
+                        //    item_clear.setVisible(false);
                         if (item_search != null)
                             item_search.setVisible(false);
                         break;
@@ -177,9 +177,9 @@ public class MainMenu extends AppCompatActivity {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
 
         item_search = menu.findItem(R.id.action_search);
-        item_clear = menu.findItem(R.id.action_clear);
+        //item_clear = menu.findItem(R.id.action_clear);
 
-        //item_find.setVisible(false);
+        //item_clear.setVisible(false);
 
         try {
             //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_keeper));
@@ -195,7 +195,7 @@ public class MainMenu extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 
         //Intent intent;
-        switch (item.getItemId()) {
+        /*switch (item.getItemId()) {
             case R.id.action_clear:
 
                 Log.i(TAG, "item_clear");
@@ -225,7 +225,7 @@ public class MainMenu extends AppCompatActivity {
                 //Intent deleteIntent = new Intent(Constants.ACTION.MQTT_CLEAR_HISTORY);
                 //sendBroadcast(deleteIntent);
                 break;
-        }
+        }*/
         return true;
     }
 
@@ -296,11 +296,11 @@ public class MainMenu extends AppCompatActivity {
 
                 //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
                 for (int i = 0; i < InitData.notifyList.size(); i++) {
-                    if (InitData.notifyList.get(i).getTitle().contains(newText)) {
+                    if (InitData.notifyList.get(i).getTitle() != null && InitData.notifyList.get(i).getTitle().contains(newText)) {
                         sortedNotifyList.add(InitData.notifyList.get(i));
-                    } else if (InitData.notifyList.get(i).getMsg().contains(newText)) {
+                    } else if (InitData.notifyList.get(i).getMsg() != null && InitData.notifyList.get(i).getMsg().contains(newText)) {
                         sortedNotifyList.add(InitData.notifyList.get(i));
-                    } else if (InitData.notifyList.get(i).getDate().contains(newText)) {
+                    } else if (InitData.notifyList.get(i).getDate() != null && InitData.notifyList.get(i).getDate().contains(newText)) {
                         sortedNotifyList.add(InitData.notifyList.get(i));
                     }
                 }
