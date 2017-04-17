@@ -1,33 +1,18 @@
 package com.macauto.macautoscm.Service;
 
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.support.v4.app.NotificationCompat;
+
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-import com.macauto.macautoscm.Data.Constants;
-import com.macauto.macautoscm.Data.FileOperation;
-import com.macauto.macautoscm.Data.HistoryItem;
-import com.macauto.macautoscm.Data.InitData;
-import com.macauto.macautoscm.MainActivity;
-import com.macauto.macautoscm.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 
 public class ScmFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = ScmFirebaseMessagingService.class.getName();
-    private Context context;
+    //private Context context;
 
     static SharedPreferences pref ;
     //static SharedPreferences.Editor editor;
@@ -37,7 +22,7 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
         Log.d(TAG, "ScmFirebaseMessagingService init");
 
         //init folder, file
-        FileOperation.init_folder_and_files();
+        //FileOperation.init_folder_and_files();
         //read from file
         //context = this;
 
@@ -72,14 +57,14 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         //SimpleDateFormat sdf = new SimpleDateFormat(context.getString(R.string.dateFormat));
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        //SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", default_locale);
 
         Log.d(TAG, "From: " + remoteMessage.getFrom());
         Log.d(TAG, "Notification Message Body: " + remoteMessage.getData().toString());
 
 
         //Calling method to generate notification
-        Object title = remoteMessage.getData().get("title");
+        /*Object title = remoteMessage.getData().get("title");
         Object body = remoteMessage.getData().get("body");
         if (title != null && body != null) {
             sendNotification(title.toString(), body.toString());
@@ -89,9 +74,9 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
             item.setTitle(title.toString());
             item.setMsg(body.toString());
             item.setDate(sdf.format(new Date()));
-            InitData.notifyList.add(item);
+            historyItemArrayList.add(item);
 
-            String msg = "";
+            String msg;
             if (FileOperation.read_message().equals("")) {
                 msg = item.getAction()+";"+item.getTitle()+";"+item.getMsg()+";"+item.getDate();
                 FileOperation.append_message(msg);
@@ -103,12 +88,12 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
             //send broadcast
             Intent newNotifyIntent = new Intent(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
             sendBroadcast(newNotifyIntent);
-        }
+        }*/
 
 
     }
 
-    private void sendNotification(String messageTitle, String messageBody) {
+    /*private void sendNotification(String messageTitle, String messageBody) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -130,5 +115,5 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, notificationBuilder.build());
-    }
+    }*/
 }

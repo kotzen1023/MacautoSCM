@@ -12,14 +12,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
+
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.CheckBox;
+
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -27,7 +27,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.macauto.macautoscm.Data.Constants;
 import com.macauto.macautoscm.Service.LoginCheckService;
 
-import java.util.UUID;
+
 
 public class LoginActivity extends AppCompatActivity{
     private static final String TAG = LoginActivity.class.getName();
@@ -76,7 +76,9 @@ public class LoginActivity extends AppCompatActivity{
         // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
@@ -92,9 +94,9 @@ public class LoginActivity extends AppCompatActivity{
         IntentFilter filter;
 
         String account;
-        String name;
+        //String name;
         String password;
-        boolean keep, autologin;
+        //boolean keep, autologin;
         boolean login_error;
         //boolean login;
 
@@ -110,10 +112,11 @@ public class LoginActivity extends AppCompatActivity{
         pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
 
         account = pref.getString("ACCOUNT", "");
-        name = pref.getString("NAME", "");
+        //name = pref.getString("NAME", "");
         password = pref.getString("PASSWORD", "");
+        deviceId = pref.getString("WIFIMAC", "");
         //keep = pref.getBoolean("KEEP_ACCOUNT_PASSWORD", false);
-        autologin = pref.getBoolean("AUTOLOGIN", false);
+        //autologin = pref.getBoolean("AUTOLOGIN", false);
         login_error = pref.getBoolean("LOGIN_ERROR", false);
         //login = pref.getBoolean("LOGIN", false);
 
@@ -155,7 +158,7 @@ public class LoginActivity extends AppCompatActivity{
             public void onClick(View v) {
 
                 Log.e(TAG, "error_count = "+login_error_count);
-                final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+                /*final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
 
                 final String tmDevice, tmSerial, androidId;
                 tmDevice = "" + tm.getDeviceId();
@@ -164,7 +167,7 @@ public class LoginActivity extends AppCompatActivity{
 
                 UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
                 deviceId = deviceUuid.toString();
-                Log.d(TAG, "UUID = "+deviceId);
+                Log.d(TAG, "UUID = "+deviceId);*/
 
                 if (login_error_count >= 3) {
                     editor = pref.edit();
@@ -243,7 +246,7 @@ public class LoginActivity extends AppCompatActivity{
                     editor = pref.edit();
                     editor.putString("ACCOUNT", editText_account.getText().toString());
                     editor.putString("PASSWORD", editText_password.getText().toString());
-                    editor.putString("DEVICEID", deviceId);
+                    //editor.putString("DEVICEID", deviceId);
                     editor.apply();
 
                     FirebaseMessaging.getInstance().subscribeToTopic(editText_account.getText().toString());

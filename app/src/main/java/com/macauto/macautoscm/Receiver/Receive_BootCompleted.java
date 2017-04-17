@@ -4,7 +4,7 @@ import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+
 import android.os.Build;
 import android.util.Log;
 
@@ -16,15 +16,15 @@ import com.macauto.macautoscm.Service.ScmInstanceIDService;
 public class Receive_BootCompleted extends BroadcastReceiver {
     private static final String TAG = Receive_BootCompleted.class.getName();
 
-    static SharedPreferences pref ;
+    //static SharedPreferences pref ;
     //static SharedPreferences.Editor editor;
-    private static final String FILE_NAME = "Preference";
+    //private static final String FILE_NAME = "Preference";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        pref = context.getSharedPreferences(FILE_NAME, context.MODE_PRIVATE);
-        String account = pref.getString("ACCOUNT", "");
-        String password = pref.getString("PASSWORD", "");
+        //pref = context.getSharedPreferences(FILE_NAME, context.MODE_PRIVATE);
+        //String account = pref.getString("ACCOUNT", "");
+        //String password = pref.getString("PASSWORD", "");
 
         if (intent.getAction().equalsIgnoreCase(Intent.ACTION_BOOT_COMPLETED)) {
 

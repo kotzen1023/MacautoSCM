@@ -1,10 +1,9 @@
 package com.macauto.macautoscm;
 
-import android.app.ActivityManager;
-import android.app.AlertDialog;
+
 import android.app.SearchManager;
 import android.content.Context;
-import android.content.DialogInterface;
+
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -14,6 +13,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,13 +23,14 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TabHost;
-import android.widget.TextView;
+
 
 import com.macauto.macautoscm.Data.Constants;
-import com.macauto.macautoscm.Data.InitData;
 
-import static com.macauto.macautoscm.Data.FileOperation.clear_record;
-import static com.macauto.macautoscm.HistoryFragment.historyAdapter;
+
+
+
+import static com.macauto.macautoscm.HistoryFragment.historyItemArrayList;
 import static com.macauto.macautoscm.HistoryFragment.sortedNotifyList;
 
 public class MainMenu extends AppCompatActivity {
@@ -39,12 +40,16 @@ public class MainMenu extends AppCompatActivity {
     private static final String TAB_2_TAG = "tab_2";
 
     public static MenuItem item_search;
+    //public static Locale default_locale;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main_menu);
+
+
+
 
         Window window;
         //init folder
@@ -77,7 +82,9 @@ public class MainMenu extends AppCompatActivity {
         // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
@@ -231,26 +238,8 @@ public class MainMenu extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        /*AlertDialog.Builder confirmdialog = new AlertDialog.Builder(ConnectionDetails.this);
-        confirmdialog.setIcon(R.drawable.ic_exit_to_app_white_48dp);
-        confirmdialog.setTitle(getResources().getString(R.string.macauto_back_to_menu_title));
-        confirmdialog.setMessage(getResources().getString(R.string.macauto_back_to_menu_description));
-        confirmdialog.setPositiveButton(getResources().getString(R.string.macauto_confirm), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
 
-                Intent intent = new Intent(ConnectionDetails.this, TopMenu.class);
-                startActivity(intent);
-                finish();
-
-            }
-        });
-        confirmdialog.setNegativeButton(getResources().getString(R.string.macauto_cancel), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-
-
-            }
-        });
-        confirmdialog.show();*/
+        finish();
     }
 
     private TabHost.TabSpec setIndicator(Context ctx, TabHost.TabSpec spec,
@@ -267,15 +256,6 @@ public class MainMenu extends AppCompatActivity {
 
 
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     final private android.support.v7.widget.SearchView.OnQueryTextListener queryListener = new android.support.v7.widget.SearchView.OnQueryTextListener() {
         //searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -295,13 +275,13 @@ public class MainMenu extends AppCompatActivity {
 
 
                 //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
-                for (int i = 0; i < InitData.notifyList.size(); i++) {
-                    if (InitData.notifyList.get(i).getTitle() != null && InitData.notifyList.get(i).getTitle().contains(newText)) {
-                        sortedNotifyList.add(InitData.notifyList.get(i));
-                    } else if (InitData.notifyList.get(i).getMsg() != null && InitData.notifyList.get(i).getMsg().contains(newText)) {
-                        sortedNotifyList.add(InitData.notifyList.get(i));
-                    } else if (InitData.notifyList.get(i).getDate() != null && InitData.notifyList.get(i).getDate().contains(newText)) {
-                        sortedNotifyList.add(InitData.notifyList.get(i));
+                for (int i = 0; i < historyItemArrayList.size(); i++) {
+                    if (historyItemArrayList.get(i).getTitle() != null && historyItemArrayList.get(i).getTitle().contains(newText)) {
+                        sortedNotifyList.add(historyItemArrayList.get(i));
+                    } else if (historyItemArrayList.get(i).getMsg() != null && historyItemArrayList.get(i).getMsg().contains(newText)) {
+                        sortedNotifyList.add(historyItemArrayList.get(i));
+                    } else if (historyItemArrayList.get(i).getDate() != null && historyItemArrayList.get(i).getDate().contains(newText)) {
+                        sortedNotifyList.add(historyItemArrayList.get(i));
                     }
                 }
 
@@ -311,8 +291,8 @@ public class MainMenu extends AppCompatActivity {
             } else {
                 //ArrayList<PasswordKeeperItem> list = new ArrayList<PasswordKeeperItem>();
 
-                for (int i = 0; i < InitData.notifyList.size(); i++) {
-                    sortedNotifyList.add(InitData.notifyList.get(i));
+                for (int i = 0; i < historyItemArrayList.size(); i++) {
+                    sortedNotifyList.add(historyItemArrayList.get(i));
                 }
 
 

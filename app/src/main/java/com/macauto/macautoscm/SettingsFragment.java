@@ -31,8 +31,8 @@ public class SettingsFragment extends Fragment {
     static SharedPreferences.Editor editor;
     private static final String FILE_NAME = "Preference";
 
-    private static String account;
-    private static String password;
+    //private static String account;
+    //private static String password;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +57,8 @@ public class SettingsFragment extends Fragment {
         context = getContext();
 
         pref = context.getSharedPreferences(FILE_NAME, MODE_PRIVATE);
-        account = pref.getString("ACCOUNT", "");
-        password = pref.getString("PASSWORD", "");
+        final String account = pref.getString("ACCOUNT", "");
+        //String password = pref.getString("PASSWORD", "");
 
         imgLogout.setOnClickListener(new View.OnClickListener() {
             @Override

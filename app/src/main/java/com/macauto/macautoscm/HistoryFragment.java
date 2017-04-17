@@ -8,26 +8,25 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Spanned;
+
 import android.util.Log;
-import android.view.Gravity;
+
 import android.view.LayoutInflater;
 
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+
 import android.widget.ListView;
-import android.widget.Toast;
+
 
 import com.macauto.macautoscm.Data.Constants;
 import com.macauto.macautoscm.Data.HistoryAdapter;
 import com.macauto.macautoscm.Data.HistoryItem;
-import com.macauto.macautoscm.Data.InitData;
+
 import com.macauto.macautoscm.Service.GetMessageService;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -39,21 +38,21 @@ public class HistoryFragment extends Fragment {
     private ListView listView;
     ProgressDialog loadDialog = null;
 
-    public ArrayAdapter<Spanned> arrayAdapter = null;
+    //public ArrayAdapter<Spanned> arrayAdapter = null;
     public static ArrayList<HistoryItem> historyItemArrayList = new ArrayList<>();
     public static ArrayList<HistoryItem> sortedNotifyList = new ArrayList<>();
     public static HistoryAdapter historyAdapter;
-    private ChangeListener changeListener = null;
+    //private ChangeListener changeListener = null;
     //private Connection connection;
 
     private static BroadcastReceiver mReceiver = null;
     private static boolean isRegister = false;
 
     //private Spanned[] history;
-    private static boolean isRegisterChangeListener = false;
+    //private static boolean isRegisterChangeListener = false;
 
     static SharedPreferences pref ;
-    static SharedPreferences.Editor editor;
+    //static SharedPreferences.Editor editor;
     private static final String FILE_NAME = "Preference";
 
     private static String account;
@@ -78,7 +77,8 @@ public class HistoryFragment extends Fragment {
 
         pref = context.getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         account = pref.getString("ACCOUNT", "");
-        device_id = pref.getString("DEVICEID", "");
+        device_id = pref.getString("WIFIMAC", "");
+
 
 
         IntentFilter filter;
@@ -121,7 +121,7 @@ public class HistoryFragment extends Fragment {
 
                 } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_MESSAGE_LIST_COMPLETE)) {
                     Log.d(TAG, "receive brocast GET_MESSAGE_LIST_COMPLETE!");
-                    historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
+                    historyAdapter = new HistoryAdapter(context, R.layout.history_item, historyItemArrayList);
                     listView.setAdapter(historyAdapter);
 
                     loadDialog.dismiss();
@@ -217,38 +217,9 @@ public class HistoryFragment extends Fragment {
 
     }
 
-    public void toast(String message) {
+    /*public void toast(String message) {
         Toast toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         toast.show();
-    }
-
-    private class ChangeListener implements PropertyChangeListener {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            // connection object has change refresh the UI
-
-
-
-            getActivity().runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    /*arrayAdapter.clear();
-                    arrayAdapter.addAll(Connections.getInstance(getActivity()).getConnection(InitData.clientHandle).history());
-                    arrayAdapter.notifyDataSetChanged();*/
-
-
-                    //historyAdapter.clear();
-                    //historyAdapter.addAll(historyItemArrayList);
-                    historyAdapter.notifyDataSetChanged();
-
-                }
-            });
-
-        }
-    }
-
-
+    }*/
 }

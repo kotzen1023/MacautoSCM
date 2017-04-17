@@ -1,19 +1,12 @@
 package com.macauto.macautoscm.Service;
 
 import android.app.IntentService;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
+
+
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.media.RingtoneManager;
-import android.net.Uri;
+
 import android.os.Build;
-import android.provider.CalendarContract;
-import android.support.v7.app.NotificationCompat;
+
 import android.util.Log;
 import android.util.Xml;
 
@@ -33,15 +26,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
-import static com.macauto.macautoscm.Data.InitData.notifyList;
+import static com.macauto.macautoscm.HistoryFragment.historyItemArrayList;
+
+
 
 
 public class GetMessageService extends IntentService {
@@ -60,13 +48,10 @@ public class GetMessageService extends IntentService {
         super("GetMessageService");
     }
 
-    private String name;
-    private int alarm_interval;
-    private int sync_option;
-    private String account;
-    private String device_id;
-    private Context context;
-    private DateFormat formatter;
+
+    //private String account;
+    //private String device_id;
+
 
 
     @Override
@@ -82,7 +67,7 @@ public class GetMessageService extends IntentService {
         alarm_interval = pref.getInt("ALARM_INTERVAL", 30);
         sync_option = pref.getInt("SYNC_SETTING", 0);*/
 
-        context = getApplicationContext();
+        //context = getApplicationContext();
 
         // = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.TAIWAN);
     }
@@ -92,7 +77,8 @@ public class GetMessageService extends IntentService {
 
         Log.i(TAG, "Handle");
 
-
+        String account;
+        String device_id;
 
         account = intent.getStringExtra("ACCOUNT");
         device_id = intent.getStringExtra("DEVICE_ID");
@@ -193,7 +179,8 @@ public class GetMessageService extends IntentService {
 
     public void LoadAndParseXML(InputStream xmlString) {
 
-        notifyList.clear();
+        //notifyList.clear();
+        historyItemArrayList.clear();
         XmlPullParser pullParser = Xml.newPullParser();
         //int i=0;
         //String value="";
@@ -257,7 +244,7 @@ public class GetMessageService extends IntentService {
 
                         if (name.equals("fxs")) {
                             Log.i(TAG, "=== End of SCM record ===");
-                            notifyList.add(item);
+                            historyItemArrayList.add(item);
                         }
                     }
                 }

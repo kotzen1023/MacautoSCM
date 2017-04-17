@@ -1,6 +1,5 @@
 package com.macauto.macautoscm;
 
-import android.*;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -9,6 +8,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -22,9 +24,11 @@ import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.macauto.macautoscm.Data.FileOperation;
-import com.macauto.macautoscm.Data.InitData;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,11 +37,12 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getName();
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
-    private Context context;
+    //private Context context;
 
     static SharedPreferences pref ;
     static SharedPreferences.Editor editor;
     private static final String FILE_NAME = "Preference";
+    //private static String macAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
         // clear FLAG_TRANSLUCENT_STATUS flag:
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         // add FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS flag to the window
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.action_bar_background)));
@@ -90,10 +97,12 @@ public class MainActivity extends AppCompatActivity {
 
         Log.d(TAG, "IID_TOKEN = "+IID_TOKEN);
 
+        //String macAddress;
+
         //init folder, file
-        FileOperation.init_folder_and_files();
+        //FileOperation.init_folder_and_files();
         //read from file
-        context = getBaseContext();
+        //context = getBaseContext();
         //InitData initData = new InitData(context);
         //initData.init(context);
 
@@ -101,6 +110,64 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
         String account = pref.getString("ACCOUNT", "");
         String password = pref.getString("PASSWORD", "");
+
+        String wifi_mac = pref.getString("WIFIMAC", "");
+
+        if (wifi_mac.equals("")) {
+            boolean mobileDataEnabled = false; // Assume disabled
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            try {
+                Class cmClass = Class.forName(cm.getClass().getName());
+                Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+                method.setAccessible(true); // Make the method callable
+                // get the setting for "mobile data"
+                mobileDataEnabled = (Boolean) method.invoke(cm);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+            //WifiInfo wInfo = wifiManager.getConnectionInfo();
+            //macAddress = wInfo.getMacAddress();
+
+            if (wifiManager.isWifiEnabled()) {
+                // WIFI ALREADY ENABLED. GRAB THE MAC ADDRESS HERE
+                WifiInfo info = wifiManager.getConnectionInfo();
+                wifi_mac = info.getMacAddress();
+            } else {
+                // ENABLE THE WIFI FIRST
+                wifiManager.setWifiEnabled(true);
+
+                // WIFI IS NOW ENABLED. GRAB THE MAC ADDRESS HERE
+                WifiInfo info = wifiManager.getConnectionInfo();
+                wifi_mac = info.getMacAddress();
+
+                while (wifi_mac == null) {
+
+                }
+
+                if (mobileDataEnabled)
+                    wifiManager.setWifiEnabled(false);
+            }
+
+            if (wifi_mac.equals("02:00:00:00:00:00")) {
+
+                try {
+                    BufferedReader br = new BufferedReader(new FileReader("/sys/class/net/wlan0/address"));
+                    wifi_mac = br.readLine();
+                    //Log.i(TAG, "mac addr: " + macAddress);
+                    br.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            Log.e(TAG, "macAddress = "+wifi_mac);
+
+            editor = pref.edit();
+            editor.putString("WIFIMAC", wifi_mac);
+            editor.apply();
+        }
 
         /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
@@ -128,19 +195,30 @@ public class MainActivity extends AppCompatActivity {
 
     private  boolean checkAndRequestPermissions() {
 
-        int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        //int writePermission = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
 
-        int phoneStatePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+        //int phoneStatePermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE);
+
+        int changeWifiPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CHANGE_WIFI_STATE);
+
+        int accessWifiPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_WIFI_STATE);
 
         List<String> listPermissionsNeeded = new ArrayList<>();
-        if (writePermission != PackageManager.PERMISSION_GRANTED) {
+        /*if (writePermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
+        }*/
 
-        if (phoneStatePermission != PackageManager.PERMISSION_GRANTED) {
+        /*if (phoneStatePermission != PackageManager.PERMISSION_GRANTED) {
             listPermissionsNeeded.add(Manifest.permission.READ_PHONE_STATE);
+        }*/
+
+        if (changeWifiPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.CHANGE_WIFI_STATE);
         }
 
+        if (accessWifiPermission != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(Manifest.permission.ACCESS_WIFI_STATE);
+        }
 
         if (!listPermissionsNeeded.isEmpty()) {
             ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
@@ -187,8 +265,10 @@ public class MainActivity extends AppCompatActivity {
                 Map<String, Integer> perms = new HashMap<>();
                 // Initialize the map with both permissions
                 //perms.put(android.Manifest.permission.WRITE_CALENDAR, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
-                perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                //perms.put(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                //perms.put(android.Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(android.Manifest.permission.CHANGE_WIFI_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_WIFI_STATE, PackageManager.PERMISSION_GRANTED);
                 //perms.put(android.Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
                 // Fill with actual results from user
                 if (grantResults.length > 0) {
@@ -196,8 +276,10 @@ public class MainActivity extends AppCompatActivity {
                         perms.put(permissions[i], grantResults[i]);
                     // Check for both permissions
                     if (//perms.get(android.Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED &&
-                            perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
-                            && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                            //perms.get(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            //perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED &&
+                                    perms.get(Manifest.permission.CHANGE_WIFI_STATE) == PackageManager.PERMISSION_GRANTED &&
+                                    perms.get(Manifest.permission.ACCESS_WIFI_STATE) == PackageManager.PERMISSION_GRANTED
                         ) {
                         Log.d(TAG, "write external permission granted");
                         // process the normal flow
@@ -209,8 +291,10 @@ public class MainActivity extends AppCompatActivity {
 //                        // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (//ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_CALENDAR) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE)
+                                //ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE) ||
+                                //ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CHANGE_WIFI_STATE) ||
+                                        ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_WIFI_STATE)
                                 ) {
                             showDialogOK("Write external Permission required for this app",
                                     new DialogInterface.OnClickListener() {

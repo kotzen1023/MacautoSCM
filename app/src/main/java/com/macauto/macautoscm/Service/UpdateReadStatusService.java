@@ -1,30 +1,22 @@
 package com.macauto.macautoscm.Service;
 
 import android.app.IntentService;
-import android.content.Context;
+
 import android.content.Intent;
-import android.os.Build;
+
 import android.util.Log;
-import android.util.Xml;
+
 
 import com.macauto.macautoscm.Data.Constants;
-import com.macauto.macautoscm.Data.HistoryItem;
+
 
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 
-import static com.macauto.macautoscm.Data.InitData.notifyList;
 
 
 public class UpdateReadStatusService extends IntentService {
@@ -39,7 +31,7 @@ public class UpdateReadStatusService extends IntentService {
 
     private static final String URL = "http://60.249.239.47:8920/service.asmx"; // 網址
 
-    private Context context;
+    //private Context context;
 
     public UpdateReadStatusService() {
         super("UpdateReadStatusService");
@@ -58,7 +50,7 @@ public class UpdateReadStatusService extends IntentService {
         alarm_interval = pref.getInt("ALARM_INTERVAL", 30);
         sync_option = pref.getInt("SYNC_SETTING", 0);*/
 
-        context = getApplicationContext();
+        //context = getApplicationContext();
 
         // = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.TAIWAN);
     }

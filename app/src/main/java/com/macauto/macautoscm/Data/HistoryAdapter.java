@@ -3,7 +3,7 @@ package com.macauto.macautoscm.Data;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.util.SparseBooleanArray;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +23,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
     private int layoutResourceId;
     private ArrayList<HistoryItem> items = new ArrayList<>();
-    public static SparseBooleanArray mSparseBooleanArray;
+    //public static SparseBooleanArray mSparseBooleanArray;
     //private static int contact_count = 0;
 
     public HistoryAdapter(Context context, int textViewResourceId,
@@ -34,7 +34,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         this.items = objects;
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mSparseBooleanArray = new SparseBooleanArray();
+        //mSparseBooleanArray = new SparseBooleanArray();
     }
 
     public int getCount() {
@@ -109,7 +109,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         return view;
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         //ImageView icon;
         //TextView jid;
         ImageView action;
@@ -117,7 +117,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         //TextView date;
         //CheckBox ckbox;
 
-        public ViewHolder(View view) {
+        private ViewHolder(View view) {
 
             this.action = (ImageView) view.findViewById(R.id.title_icon);
             this.msg = (TextView) view.findViewById(R.id.history_msg);
