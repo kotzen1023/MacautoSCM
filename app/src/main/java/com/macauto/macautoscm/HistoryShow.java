@@ -165,7 +165,7 @@ public class HistoryShow extends Activity {
 
         //Log.i(TAG, "item[1] = "+listView.getAdapter().);
 
-        if (read_sp.equals("true")) {
+        /*if (read_sp.equals("true")) {
             Log.d(TAG, "This message had been read.");
         } else {
 
@@ -175,7 +175,7 @@ public class HistoryShow extends Activity {
             intent.putExtra("DEVICE_ID", device_id);
             intent.putExtra("DOC_NO", message);
             startService(intent);
-        }
+        }*/
 
     }
 

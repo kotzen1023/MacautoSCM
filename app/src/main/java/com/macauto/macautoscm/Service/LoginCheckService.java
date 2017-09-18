@@ -32,6 +32,8 @@ public class LoginCheckService extends IntentService {
 
     private static final String URL = "http://60.249.239.47:8920/service.asmx"; // 網址
 
+    int ret = 2; //init with connection failed
+
     public LoginCheckService() {
         super("LoginCheckService");
     }
@@ -45,8 +47,33 @@ public class LoginCheckService extends IntentService {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         Log.d(TAG, "onDestroy()");
+
+        Intent loginResultIntent;
+
+        switch (ret) {
+            case 0:
+                loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
+                sendBroadcast(loginResultIntent);
+                break;
+            case 1:
+                loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
+                sendBroadcast(loginResultIntent);
+                break;
+            case 2:
+                loginResultIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
+                sendBroadcast(loginResultIntent);
+                break;
+            default:
+                loginResultIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
+                sendBroadcast(loginResultIntent);
+                break;
+
+
+        }
+
+        super.onDestroy();
+
     }
 
     @Override
@@ -117,18 +144,20 @@ public class LoginCheckService extends IntentService {
                 Intent decryptDoneIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
                 sendBroadcast(decryptDoneIntent);
             } else {
-                Intent loginResultIntent;
+                //Intent loginResultIntent;
                 SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
                 Log.d(TAG, String.valueOf(resultsRequestSOAP));
 
                 if (String.valueOf(resultsRequestSOAP).indexOf("OK") > 0) {
                     Log.e(TAG, "ret = true");
-                    loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
-                    sendBroadcast(loginResultIntent);
+                    ret = 0;
+                    //loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
+                    //sendBroadcast(loginResultIntent);
                 } else {
                     Log.e(TAG, "ret = false");
-                    loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
-                    sendBroadcast(loginResultIntent);
+                    ret = 1;
+                    //loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
+                    //sendBroadcast(loginResultIntent);
                 }
                 /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                     InputStream stream = new ByteArrayInputStream(String.valueOf(resultsRequestSOAP).getBytes(StandardCharsets.UTF_8));
@@ -143,10 +172,10 @@ public class LoginCheckService extends IntentService {
 
         } catch (Exception e) {
             // 抓到錯誤訊息
-
+            ret = 2;
             e.printStackTrace();
-            Intent decryptDoneIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
-            sendBroadcast(decryptDoneIntent);
+            //Intent decryptDoneIntent = new Intent(Constants.ACTION.SOAP_CONNECTION_FAIL);
+            //sendBroadcast(decryptDoneIntent);
         }
 
 

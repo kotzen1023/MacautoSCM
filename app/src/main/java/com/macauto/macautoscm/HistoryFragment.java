@@ -25,6 +25,7 @@ import com.macauto.macautoscm.Data.HistoryAdapter;
 import com.macauto.macautoscm.Data.HistoryItem;
 
 import com.macauto.macautoscm.Service.GetMessageService;
+import com.macauto.macautoscm.Service.UpdateReadStatusService;
 
 
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ public class HistoryFragment extends Fragment {
 
     private static String account;
     private static String device_id;
+    private static int select_item_index = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,20 @@ public class HistoryFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 HistoryItem item = historyAdapter.getItem(position);
 
+                if (item.isRead_sp()) {
+                    Log.d(TAG, "read sp true");
+                } else {
+                    item.setRead_sp(true);
+
+                    Intent intent = new Intent(context, UpdateReadStatusService.class);
+                    intent.setAction(Constants.ACTION.GET_MESSAGE_LIST_ACTION);
+                    intent.putExtra("ACCOUNT", account);
+                    intent.putExtra("DEVICE_ID", device_id);
+                    intent.putExtra("DOC_NO", item.getMsg());
+                    context.startService(intent);
+                }
+
+
                 if (item != null) {
                     Intent intent = new Intent(context, HistoryShow.class);
                     intent.putExtra("HISTORY_TYPE", String.valueOf(item.getAction()));
@@ -123,8 +139,9 @@ public class HistoryFragment extends Fragment {
                     Log.d(TAG, "receive brocast GET_MESSAGE_LIST_COMPLETE!");
                     historyAdapter = new HistoryAdapter(context, R.layout.history_item, historyItemArrayList);
                     listView.setAdapter(historyAdapter);
-
                     loadDialog.dismiss();
+
+
                 }
 
                 else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {
@@ -144,7 +161,20 @@ public class HistoryFragment extends Fragment {
             Log.d(TAG, "registerReceiver mReceiver");
         }
 
+        //run on create
+        Intent intent = new Intent(context, GetMessageService.class);
+        intent.setAction(Constants.ACTION.GET_MESSAGE_LIST_ACTION);
+        intent.putExtra("ACCOUNT", account);
+        intent.putExtra("DEVICE_ID", device_id);
+        context.startService(intent);
 
+        loadDialog = new ProgressDialog(context);
+        loadDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        loadDialog.setTitle("Loading...");
+        loadDialog.setIndeterminate(false);
+        loadDialog.setCancelable(false);
+
+        loadDialog.show();
 
         //Intent intent = new Intent(context, GetMessageService.class);
         //intent.setAction(Constants.ACTION.GET_MESSAGE_LIST_ACTION);
@@ -189,22 +219,11 @@ public class HistoryFragment extends Fragment {
             historyAdapter = new HistoryAdapter(context, R.layout.history_item, InitData.notifyList);
             listView.setAdapter(historyAdapter);
         }*/
+        if (historyAdapter != null)
+            historyAdapter.notifyDataSetChanged();
 
 
 
-        Intent intent = new Intent(context, GetMessageService.class);
-        intent.setAction(Constants.ACTION.GET_MESSAGE_LIST_ACTION);
-        intent.putExtra("ACCOUNT", account);
-        intent.putExtra("DEVICE_ID", device_id);
-        context.startService(intent);
-
-        loadDialog = new ProgressDialog(context);
-        loadDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        loadDialog.setTitle("Loading...");
-        loadDialog.setIndeterminate(false);
-        loadDialog.setCancelable(false);
-
-        loadDialog.show();
 
 
         super.onResume();

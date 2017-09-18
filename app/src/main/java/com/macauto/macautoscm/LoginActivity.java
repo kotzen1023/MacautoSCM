@@ -107,7 +107,7 @@ public class LoginActivity extends AppCompatActivity{
         //checkBox_autologin = (CheckBox) findViewById(R.id.checkBoxAutoLogin);
 
         Button btnConfirm = (Button) findViewById(R.id.btnLoginConfirm);
-        Button btnClear = (Button) findViewById(R.id.btnLoginClear);
+        //Button btnClear = (Button) findViewById(R.id.btnLoginClear);
 
         pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
 
@@ -227,14 +227,14 @@ public class LoginActivity extends AppCompatActivity{
             }
         });
 
-        btnClear.setOnClickListener(new View.OnClickListener() {
+        /*btnClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editText_account.setText("");
                 //editText_name.setText("");
                 editText_password.setText("");
             }
-        });
+        });*/
 
         mReceiver = new BroadcastReceiver() {
             @Override
@@ -339,6 +339,6 @@ public class LoginActivity extends AppCompatActivity{
     public void onBackPressed() {
         //Intent intent = new Intent(Login.this, TopMenu.class);
         //startActivity(intent);
-        //finish();
+        finish();
     }
 }

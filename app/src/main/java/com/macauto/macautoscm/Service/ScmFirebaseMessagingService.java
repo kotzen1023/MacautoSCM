@@ -1,5 +1,6 @@
 package com.macauto.macautoscm.Service;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 
 import android.util.Log;
@@ -7,7 +8,7 @@ import android.util.Log;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
+import com.macauto.macautoscm.Data.Constants;
 
 
 public class ScmFirebaseMessagingService extends FirebaseMessagingService {
@@ -89,7 +90,9 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
             Intent newNotifyIntent = new Intent(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
             sendBroadcast(newNotifyIntent);
         }*/
-
+        //send broadcast
+        Intent newNotifyIntent = new Intent(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
+        sendBroadcast(newNotifyIntent);
 
     }
 
