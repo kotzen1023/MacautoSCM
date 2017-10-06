@@ -30,6 +30,8 @@ import com.macauto.macautoscm.Service.UpdateReadStatusService;
 
 import java.util.ArrayList;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
+
 import static android.content.Context.MODE_PRIVATE;
 
 public class HistoryFragment extends Fragment {
@@ -141,7 +143,14 @@ public class HistoryFragment extends Fragment {
                     listView.setAdapter(historyAdapter);
                     loadDialog.dismiss();
 
+                    int badgeCount = 0;
+                    for (int i=0; i<historyItemArrayList.size(); i++) {
+                        if (!historyItemArrayList.get(i).isRead_sp()) {
+                            badgeCount++;
+                        }
+                    }
 
+                    ShortcutBadger.applyCount(context, badgeCount);
                 }
 
                 else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {

@@ -30,7 +30,7 @@ public class LoginCheckService extends IntentService {
 
     private static final String SOAP_ACTION1 = "http://tempuri.org/login"; // SOAP_ACTION
 
-    private static final String URL = "http://60.249.239.47:8920/service.asmx"; // 網址
+    private static final String URL = "http://60.249.239.47:9571/service.asmx"; // 網址
 
     int ret = 2; //init with connection failed
 

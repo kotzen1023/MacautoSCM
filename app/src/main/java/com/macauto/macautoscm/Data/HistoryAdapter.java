@@ -13,12 +13,17 @@ import android.widget.TextView;
 
 import com.macauto.macautoscm.R;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     public static final String TAG = HistoryAdapter.class.getName();
-    //private Context context;
+    private Context context;
     private LayoutInflater inflater = null;
 
     private int layoutResourceId;
@@ -26,15 +31,20 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     //public static SparseBooleanArray mSparseBooleanArray;
     //private static int contact_count = 0;
 
+    private SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    //private SimpleDateFormat AMBIENT_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private String current_date;
+
     public HistoryAdapter(Context context, int textViewResourceId,
                           ArrayList<HistoryItem> objects) {
         super(context, textViewResourceId, objects);
-        //this.context = context;
+        this.context = context;
         this.layoutResourceId = textViewResourceId;
         this.items = objects;
 
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //mSparseBooleanArray = new SparseBooleanArray();
+        current_date = DATE_FORMAT.format(new Date());
     }
 
     public int getCount() {
@@ -83,12 +93,47 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
             String splitter[] = item.getDate().split(" ");
             String time_splitter[] = splitter[1].split(":");
 
+            String end_date = splitter[1].substring(0, splitter[1].length() -3);
+
+            Date date = null;
+            String newWord = item.getDate();
+
+            try {
+
+                date = DATE_FORMAT.parse(newWord);
+                //Log.e(TAG, "After parse ==>"+date);
+            } catch (ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            if (current_date.substring(0,10).equals(splitter[0])) {
+                holder.day.setText(context.getResources().getString(R.string.date_today));
+                holder.date.setText(end_date);
+            } else {
+                if (date != null) {
+                    Calendar c = Calendar.getInstance();
+                    c.setTime(date);
+                    holder.day.setText(splitter[0]);
+
+                    if (splitter[0].substring(0,4).equals(current_date.substring(0,4))) {
+                        holder.day.setText(splitter[0].substring(5,10));
+                    } else {
+                        holder.day.setText(splitter[0]);
+                    }
+
+                    holder.date.setText(end_date);
+
+                } else {
+                    holder.date.setText(splitter[0]+" " + end_date);
+                }
+            }
+
             if (!item.getMsg().equals("")) {
                 if (splitter.length == 2 && time_splitter.length == 3) {
-                    holder.msg.setText(item.getMsg() + "     " +time_splitter[0] + ":" + time_splitter[1]);
+                    holder.msg.setText(item.getMsg());
                 } else {
-                    holder.msg.setText(getContext().getResources().getString(R.string.scm_order_no) + " " + item.getMsg() + " " +
-                            getContext().getResources().getString(R.string.scm_time) + item.getDate());
+                    holder.msg.setText(getContext().getResources().getString(R.string.scm_order_no) + " " + item.getMsg());
                 }
             } else {
                 Log.e(TAG, "item.getMsg() == null");
@@ -113,6 +158,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         //ImageView icon;
         //TextView jid;
         ImageView action;
+        TextView day;
+        TextView date;
         TextView msg;
         //TextView date;
         //CheckBox ckbox;
@@ -120,6 +167,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
         private ViewHolder(View view) {
 
             this.action = (ImageView) view.findViewById(R.id.title_icon);
+            this.day = (TextView) view.findViewById(R.id.history_day);
+            this.date = (TextView) view.findViewById(R.id.history_time);
             this.msg = (TextView) view.findViewById(R.id.history_msg);
             //this.date = (TextView) view.findViewById(R.id.history_time);
         }

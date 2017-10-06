@@ -1,14 +1,25 @@
 package com.macauto.macautoscm.Service;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.MainActivity;
+import com.macauto.macautoscm.R;
+
+import me.leolin.shortcutbadger.ShortcutBadger;
 
 
 public class ScmFirebaseMessagingService extends FirebaseMessagingService {
@@ -95,8 +106,43 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
         sendBroadcast(newNotifyIntent);
 
     }
+    @Override
+    public void handleIntent(Intent intent) {
+        Log.d(TAG, "handleIntent");
 
-    /*private void sendNotification(String messageTitle, String messageBody) {
+        Bundle bundle = intent.getExtras();
+
+        Log.e(TAG, "bundle = "+bundle.toString());
+
+        String myBadge = bundle.getString("gcm.notification.badge");
+        String title = bundle.getString("gcm.notification.title");
+        String body = bundle.getString("gcm.notification.body");
+
+        Log.d(TAG, "title = "+title);
+        Log.d(TAG, "body = "+body);
+        Log.d(TAG, "badge = "+myBadge);
+
+        if (myBadge == null) {
+            Log.e(TAG, "myBadge = null");
+            ShortcutBadger.applyCount(this, 0);
+        } else {
+            int badge_count;
+            try {
+                badge_count = Integer.valueOf(myBadge);
+                ShortcutBadger.applyCount(this, badge_count);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (title != null && body != null) {
+            sendNotification(title, body);
+        }
+
+        Intent newNotifyIntent = new Intent(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
+        sendBroadcast(newNotifyIntent);
+    }
+    private void sendNotification(String messageTitle, String messageBody) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
@@ -107,7 +153,8 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
         Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setColor(color)
-                .setSmallIcon(R.drawable.m_mark)
+                //.setSmallIcon(R.drawable.m_mark)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
@@ -118,5 +165,5 @@ public class ScmFirebaseMessagingService extends FirebaseMessagingService {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0, notificationBuilder.build());
-    }*/
+    }
 }

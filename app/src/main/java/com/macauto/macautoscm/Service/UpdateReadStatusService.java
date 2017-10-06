@@ -16,7 +16,9 @@ import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import me.leolin.shortcutbadger.ShortcutBadger;
 
+import static com.macauto.macautoscm.HistoryFragment.historyItemArrayList;
 
 
 public class UpdateReadStatusService extends IntentService {
@@ -29,7 +31,7 @@ public class UpdateReadStatusService extends IntentService {
 
     private static final String SOAP_ACTION1 = "http://tempuri.org/Update_Read_Status"; // SOAP_ACTION
 
-    private static final String URL = "http://60.249.239.47:8920/service.asmx"; // 網址
+    private static final String URL = "http://60.249.239.47:9571/service.asmx"; // 網址
 
     //private Context context;
 
@@ -124,6 +126,14 @@ public class UpdateReadStatusService extends IntentService {
                     Log.e(TAG, "ret = true");
                     //loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE);
                     //sendBroadcast(loginResultIntent);
+                    int badgeCount = 0;
+                    for (int i=0; i<historyItemArrayList.size(); i++) {
+                        if (!historyItemArrayList.get(i).isRead_sp()) {
+                            badgeCount++;
+                        }
+                    }
+
+                    ShortcutBadger.applyCount(this, badgeCount);
                 } else {
                     Log.e(TAG, "ret = false");
                     //loginResultIntent = new Intent(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL);
