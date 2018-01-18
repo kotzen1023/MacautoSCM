@@ -151,11 +151,25 @@ public class HistoryFragment extends Fragment {
                     }
 
                     ShortcutBadger.applyCount(context, badgeCount);
-                }
-
-                else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE)) {
                     historyAdapter = new HistoryAdapter(context, R.layout.history_item, sortedNotifyList);
                     listView.setAdapter(historyAdapter);
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_MESSAGE_LIST_CLEAR)) {
+                    Log.d(TAG, "receive brocast GET_MESSAGE_LIST_CLEAR!");
+                    if (historyAdapter != null)
+                        historyAdapter.notifyDataSetChanged();
+
+
+                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.GET_MESSAGE_DATA)) {
+                    Log.d(TAG, "receive brocast GET_MESSAGE_DATA!");
+
+                    HistoryItem item = new HistoryItem();
+                    item.setMsg(intent.getExtras().getString("po_no"));
+                    item.setDate(intent.getExtras().getString("send_datetime"));
+                    item.setRead_sp(intent.getExtras().getBoolean("read_sp"));
+
+
+                    historyItemArrayList.add(item);
                 }
             }
         };
@@ -165,6 +179,8 @@ public class HistoryFragment extends Fragment {
             filter.addAction(Constants.ACTION.GET_NEW_NOTIFICATION_ACTION);
             filter.addAction(Constants.ACTION.GET_HISTORY_LIST_SORT_COMPLETE);
             filter.addAction(Constants.ACTION.GET_MESSAGE_LIST_COMPLETE);
+            filter.addAction(Constants.ACTION.GET_MESSAGE_LIST_CLEAR);
+            filter.addAction(Constants.ACTION.GET_MESSAGE_DATA);
             context.registerReceiver(mReceiver, filter);
             isRegister = true;
             Log.d(TAG, "registerReceiver mReceiver");

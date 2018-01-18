@@ -180,7 +180,11 @@ public class GetMessageService extends IntentService {
     public void LoadAndParseXML(InputStream xmlString) {
 
         //notifyList.clear();
-        historyItemArrayList.clear();
+        //historyItemArrayList.clear();
+
+        Intent intentClear = new Intent(Constants.ACTION.GET_MESSAGE_LIST_CLEAR);
+        sendBroadcast(intentClear);
+
         XmlPullParser pullParser = Xml.newPullParser();
         //int i=0;
         //String value="";
@@ -245,6 +249,11 @@ public class GetMessageService extends IntentService {
                         if (name.equals("fxs")) {
                             Log.i(TAG, "=== End of SCM record ===");
                             historyItemArrayList.add(item);
+                            Intent intentData = new Intent(Constants.ACTION.GET_MESSAGE_DATA);
+                            intentData.putExtra("po_no", item.getMsg());
+                            intentData.putExtra("send_datetime", item.getDate());
+                            intentData.putExtra("read_sp", item.isRead_sp());
+                            sendBroadcast(intentData);
                         }
                     }
                 }

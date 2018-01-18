@@ -13,5 +13,8 @@ public class Constants {
         String SOAP_CONNECTION_FAIL = "com.macauto.MacautoSCM.SoapConnectionFail";
         String GET_MESSAGE_LIST_ACTION = "com.macauto.MacautoSCM.GetMessageListAction";
         String GET_MESSAGE_LIST_COMPLETE = "com.macauto.MacautoSCM.GetMessageListComplete";
+
+        String GET_MESSAGE_LIST_CLEAR = "com.macauto.MacautoSCM.GetMessageListClear";
+        String GET_MESSAGE_DATA = "com.macauto.MacautoSCM.GetMessageData";
     }
 }
