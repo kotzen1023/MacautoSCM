@@ -74,13 +74,14 @@ public class ErrorTimer extends Activity{
         @Override
         public void onTick(long millisUntilFinished) {
             NumberFormat f = new DecimalFormat("00");
-            final TextView time = (TextView) findViewById(R.id.timer);
+            final TextView time = findViewById(R.id.timer);
             Long spentTime = startTime - System.currentTimeMillis() ;
 
             Long minius = (spentTime/1000)/60;
 
             Long seconds = (spentTime/1000) % 60;
-            time.setText(f.format(minius)+":"+f.format(seconds));
+            String timeString = f.format(minius)+":"+f.format(seconds);
+            time.setText(timeString);
         }
 
         @Override

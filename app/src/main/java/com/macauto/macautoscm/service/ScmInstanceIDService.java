@@ -1,4 +1,4 @@
-package com.macauto.macautoscm.Service;
+package com.macauto.macautoscm.service;
 
 import android.util.Log;
 

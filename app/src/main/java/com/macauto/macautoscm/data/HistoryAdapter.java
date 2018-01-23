@@ -1,4 +1,4 @@
-package com.macauto.macautoscm.Data;
+package com.macauto.macautoscm.data;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -58,7 +58,7 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
     }
 
     @NonNull
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView,@NonNull ViewGroup parent) {
 
         //Log.e(TAG, "getView = " + position);
         View view;
@@ -166,10 +166,10 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
 
         private ViewHolder(View view) {
 
-            this.action = (ImageView) view.findViewById(R.id.title_icon);
-            this.day = (TextView) view.findViewById(R.id.history_day);
-            this.date = (TextView) view.findViewById(R.id.history_time);
-            this.msg = (TextView) view.findViewById(R.id.history_msg);
+            this.action = view.findViewById(R.id.title_icon);
+            this.day = view.findViewById(R.id.history_day);
+            this.date = view.findViewById(R.id.history_time);
+            this.msg = view.findViewById(R.id.history_msg);
             //this.date = (TextView) view.findViewById(R.id.history_time);
         }
 

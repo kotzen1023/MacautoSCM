@@ -1,4 +1,4 @@
-package com.macauto.macautoscm.Service;
+package com.macauto.macautoscm.service;
 
 import android.app.IntentService;
 
@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 
-import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.data.Constants;
 
 
 import org.ksoap2.SoapEnvelope;
@@ -70,9 +70,13 @@ public class UpdateReadStatusService extends IntentService {
 
         Log.d(TAG, "account = "+account+" device id = "+device_id+" doc_no = "+doc_no);
 
-        if (intent.getAction().equals(Constants.ACTION.GET_MESSAGE_LIST_ACTION)) {
-            Log.i(TAG, "GET_MESSAGE_LIST_ACTION");
+        if (intent.getAction() != null) {
+            if (intent.getAction().equals(Constants.ACTION.GET_MESSAGE_LIST_ACTION)) {
+                Log.i(TAG, "GET_MESSAGE_LIST_ACTION");
+            }
         }
+
+
 
         try {
             // 建立一個 WebService 請求

@@ -24,8 +24,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.macauto.macautoscm.Data.Constants;
-import com.macauto.macautoscm.Service.LoginCheckService;
+import com.macauto.macautoscm.data.Constants;
+import com.macauto.macautoscm.service.LoginCheckService;
 
 
 
@@ -100,13 +100,13 @@ public class LoginActivity extends AppCompatActivity{
         boolean login_error;
         //boolean login;
 
-        editText_account = (EditText) findViewById(R.id.accountInput);
+        editText_account = findViewById(R.id.accountInput);
         //editText_name = (EditText) findViewById(R.id.nameInput);
-        editText_password = (EditText) findViewById(R.id.passwordInput);
+        editText_password = findViewById(R.id.passwordInput);
         //checkBox_keep = (CheckBox) findViewById(R.id.checkBoxKeep);
         //checkBox_autologin = (CheckBox) findViewById(R.id.checkBoxAutoLogin);
 
-        Button btnConfirm = (Button) findViewById(R.id.btnLoginConfirm);
+        Button btnConfirm = findViewById(R.id.btnLoginConfirm);
         //Button btnClear = (Button) findViewById(R.id.btnLoginClear);
 
         pref = getSharedPreferences(FILE_NAME, MODE_PRIVATE);
@@ -239,43 +239,48 @@ public class LoginActivity extends AppCompatActivity{
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE)) {
-                    Log.d(TAG, "receive CHECK_MANUFACTURER_LOGIN_COMPLETE!");
 
-                    //save account
-                    editor = pref.edit();
-                    editor.putString("ACCOUNT", editText_account.getText().toString());
-                    editor.putString("PASSWORD", editText_password.getText().toString());
-                    //editor.putString("DEVICEID", deviceId);
-                    editor.apply();
+                if (intent.getAction() != null) {
+                    if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_COMPLETE)) {
+                        Log.d(TAG, "receive CHECK_MANUFACTURER_LOGIN_COMPLETE!");
 
-                    FirebaseMessaging.getInstance().subscribeToTopic(editText_account.getText().toString());
+                        //save account
+                        editor = pref.edit();
+                        editor.putString("ACCOUNT", editText_account.getText().toString());
+                        editor.putString("PASSWORD", editText_password.getText().toString());
+                        //editor.putString("DEVICEID", deviceId);
+                        editor.apply();
 
-                    if (isRegister && mReceiver != null) {
-                        try {
-                            unregisterReceiver(mReceiver);
-                        } catch (IllegalArgumentException e) {
-                            e.printStackTrace();
+                        FirebaseMessaging.getInstance().subscribeToTopic(editText_account.getText().toString());
+
+                        if (isRegister && mReceiver != null) {
+                            try {
+                                unregisterReceiver(mReceiver);
+                            } catch (IllegalArgumentException e) {
+                                e.printStackTrace();
+                            }
+                            isRegister = false;
+                            mReceiver = null;
                         }
-                        isRegister = false;
-                        mReceiver = null;
-                    }
 
-                    Intent mainIntent = new Intent(LoginActivity.this, MainMenu.class);
-                    startActivity(mainIntent);
-                    finish();
-                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL)) {
-                    Log.e(TAG, "receive CHECK_MANUFACTURER_LOGIN_FAIL!");
-                    if (loadDialog != null)
-                        loadDialog.dismiss();
-                    toast(getResources().getString(R.string.scm_login_fail));
-                    login_error_count++;
-                } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.SOAP_CONNECTION_FAIL)) {
-                    Log.e(TAG, "receive SOAP_CONNECTION_FAIL!");
-                    if (loadDialog != null)
-                        loadDialog.dismiss();
-                    toast(getResources().getString(R.string.scm_soap_error));
+                        Intent mainIntent = new Intent(LoginActivity.this, MainMenu.class);
+                        startActivity(mainIntent);
+                        finish();
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.CHECK_MANUFACTURER_LOGIN_FAIL)) {
+                        Log.e(TAG, "receive CHECK_MANUFACTURER_LOGIN_FAIL!");
+                        if (loadDialog != null)
+                            loadDialog.dismiss();
+                        toast(getResources().getString(R.string.scm_login_fail));
+                        login_error_count++;
+                    } else if (intent.getAction().equalsIgnoreCase(Constants.ACTION.SOAP_CONNECTION_FAIL)) {
+                        Log.e(TAG, "receive SOAP_CONNECTION_FAIL!");
+                        if (loadDialog != null)
+                            loadDialog.dismiss();
+                        toast(getResources().getString(R.string.scm_soap_error));
+                    }
                 }
+
+
             }
         };
 

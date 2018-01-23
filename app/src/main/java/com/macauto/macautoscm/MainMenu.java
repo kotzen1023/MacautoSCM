@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.TabHost;
 
 
-import com.macauto.macautoscm.Data.Constants;
+import com.macauto.macautoscm.data.Constants;
 
 
 
@@ -113,7 +113,7 @@ public class MainMenu extends AppCompatActivity {
     private void InitView() {
         FragmentTabHost mTabHost;
 
-        mTabHost = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        mTabHost = findViewById(android.R.id.tabhost);
         mTabHost.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
 
         //mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_1_TAG),
@@ -247,7 +247,7 @@ public class MainMenu extends AppCompatActivity {
         View v = LayoutInflater.from(ctx).inflate(R.layout.tab_item, null);
         v.setBackgroundResource(resid);
         //TextView tv = (TextView)v.findViewById(R.id.txt_tabtxt);
-        ImageView img = (ImageView)v.findViewById(R.id.img_tabtxt);
+        ImageView img = v.findViewById(R.id.img_tabtxt);
 
         //tv.setText(string);
         img.setBackgroundResource(genresIcon);
