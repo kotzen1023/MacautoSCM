@@ -12,6 +12,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -116,57 +117,61 @@ public class MainActivity extends AppCompatActivity {
         if (wifi_mac.equals("")) {
             boolean mobileDataEnabled = false; // Assume disabled
             ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            try {
-                Class cmClass = Class.forName(cm.getClass().getName());
-                Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
-                method.setAccessible(true); // Make the method callable
-                // get the setting for "mobile data"
-                mobileDataEnabled = (Boolean) method.invoke(cm);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (cm != null) {
+                try {
+                    Class<?> cmClass = Class.forName(cm.getClass().getName());
+                    Method method = cmClass.getDeclaredMethod("getMobileDataEnabled");
+                    method.setAccessible(true); // Make the method callable
+                    // get the setting for "mobile data"
+                    mobileDataEnabled = (Boolean) method.invoke(cm);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             //WifiInfo wInfo = wifiManager.getConnectionInfo();
             //macAddress = wInfo.getMacAddress();
 
-            if (wifiManager.isWifiEnabled()) {
-                // WIFI ALREADY ENABLED. GRAB THE MAC ADDRESS HERE
-                WifiInfo info = wifiManager.getConnectionInfo();
-                wifi_mac = info.getMacAddress();
-            } else {
-                // ENABLE THE WIFI FIRST
-                wifiManager.setWifiEnabled(true);
+            if (wifiManager != null) {
+                if (wifiManager.isWifiEnabled()) {
+                    // WIFI ALREADY ENABLED. GRAB THE MAC ADDRESS HERE
+                    WifiInfo info = wifiManager.getConnectionInfo();
+                    wifi_mac = info.getMacAddress();
+                } else {
+                    // ENABLE THE WIFI FIRST
+                    wifiManager.setWifiEnabled(true);
 
-                // WIFI IS NOW ENABLED. GRAB THE MAC ADDRESS HERE
-                WifiInfo info = wifiManager.getConnectionInfo();
-                wifi_mac = info.getMacAddress();
+                    // WIFI IS NOW ENABLED. GRAB THE MAC ADDRESS HERE
+                    WifiInfo info = wifiManager.getConnectionInfo();
+                    wifi_mac = info.getMacAddress();
 
-                while (wifi_mac == null) {
+                    while (wifi_mac == null) {
 
+                    }
+
+                    if (mobileDataEnabled)
+                        wifiManager.setWifiEnabled(false);
                 }
 
-                if (mobileDataEnabled)
-                    wifiManager.setWifiEnabled(false);
-            }
+                if (wifi_mac.equals("02:00:00:00:00:00")) {
 
-            if (wifi_mac.equals("02:00:00:00:00:00")) {
-
-                try {
-                    BufferedReader br = new BufferedReader(new FileReader("/sys/class/net/wlan0/address"));
-                    wifi_mac = br.readLine();
-                    //Log.i(TAG, "mac addr: " + macAddress);
-                    br.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader("/sys/class/net/wlan0/address"));
+                        wifi_mac = br.readLine();
+                        //Log.i(TAG, "mac addr: " + macAddress);
+                        br.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
+
+                Log.e(TAG, "macAddress = "+wifi_mac);
+
+                editor = pref.edit();
+                editor.putString("WIFIMAC", wifi_mac);
+                editor.apply();
             }
-
-            Log.e(TAG, "macAddress = "+wifi_mac);
-
-            editor = pref.edit();
-            editor.putString("WIFIMAC", wifi_mac);
-            editor.apply();
         }
 
         /*Intent intent = new Intent(MainActivity.this, LoginActivity.class);
@@ -229,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         //Log.e(TAG, "result size = "+grantResults.length+ "result[0] = "+grantResults[0]+", result[1] = "+grantResults[1]);
 
 

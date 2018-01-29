@@ -125,7 +125,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
                     holder.date.setText(end_date);
 
                 } else {
-                    holder.date.setText(splitter[0]+" " + end_date);
+                    String msg = splitter[0]+" " + end_date;
+                    holder.date.setText(msg);
                 }
             }
 
@@ -133,7 +134,8 @@ public class HistoryAdapter extends ArrayAdapter<HistoryItem> {
                 if (splitter.length == 2 && time_splitter.length == 3) {
                     holder.msg.setText(item.getMsg());
                 } else {
-                    holder.msg.setText(getContext().getResources().getString(R.string.scm_order_no) + " " + item.getMsg());
+                    String msg = getContext().getResources().getString(R.string.scm_order_no) + " " + item.getMsg();
+                    holder.msg.setText(msg);
                 }
             } else {
                 Log.e(TAG, "item.getMsg() == null");

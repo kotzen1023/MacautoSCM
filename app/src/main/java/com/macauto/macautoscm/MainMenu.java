@@ -9,7 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTabHost;
-import android.support.v4.view.MenuItemCompat;
+
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -119,7 +119,7 @@ public class MainMenu extends AppCompatActivity {
         //mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_1_TAG),
         //        R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_history_tab), R.drawable.ic_history_white_48dp), HistoryFragment.class, null);
         mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_1_TAG),
-                R.drawable.tab_indicator_gen, "", R.drawable.mail), HistoryFragment.class, null);
+                R.drawable.tab_indicator_gen, R.drawable.mail), HistoryFragment.class, null);
 
 
 
@@ -127,7 +127,7 @@ public class MainMenu extends AppCompatActivity {
         //mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_2_TAG),
         //        R.drawable.tab_indicator_gen, getResources().getString(R.string.scm_setting), R.drawable.ic_settings_white_48dp), SettingsFragment.class, null);
         mTabHost.addTab(setIndicator(MainMenu.this, mTabHost.newTabSpec(TAB_2_TAG),
-                R.drawable.tab_indicator_gen, "", R.drawable.gear), SettingsFragment.class, null);
+                R.drawable.tab_indicator_gen, R.drawable.gear), SettingsFragment.class, null);
 
 
 
@@ -180,20 +180,26 @@ public class MainMenu extends AppCompatActivity {
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         MenuItem searchMenuItem = menu.findItem(R.id.action_search);
         //SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchMenuItem);
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        SearchView searchView = (SearchView) searchMenuItem.getActionView();
+
 
         item_search = menu.findItem(R.id.action_search);
         //item_clear = menu.findItem(R.id.action_clear);
 
         //item_clear.setVisible(false);
 
-        try {
-            //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_keeper));
-            searchView.setOnQueryTextListener(queryListener);
-        }catch(Exception e){
-            e.printStackTrace();
+        if (searchManager != null) {
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+            try {
+                //SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search_keeper));
+                searchView.setOnQueryTextListener(queryListener);
+            }catch(Exception e){
+                e.printStackTrace();
+            }
         }
+
+
 
         return true;
     }
@@ -243,7 +249,7 @@ public class MainMenu extends AppCompatActivity {
     }
 
     private TabHost.TabSpec setIndicator(Context ctx, TabHost.TabSpec spec,
-                                         int resid, String string, int genresIcon) {
+                                         int resid, int genresIcon) {
         View v = LayoutInflater.from(ctx).inflate(R.layout.tab_item, null);
         v.setBackgroundResource(resid);
         //TextView tv = (TextView)v.findViewById(R.id.txt_tabtxt);
@@ -294,6 +300,7 @@ public class MainMenu extends AppCompatActivity {
                 for (int i = 0; i < historyItemArrayList.size(); i++) {
                     sortedNotifyList.add(historyItemArrayList.get(i));
                 }
+
 
 
                 //passwordKeeperArrayAdapter = new PasswordKeeperArrayAdapter(Password_Keeper.this, R.layout.passwd_keeper_browsw_item, list);
